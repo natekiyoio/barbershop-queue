@@ -265,8 +265,18 @@
 
                 const data = await response.json();
 
-                // Handle empty response or non-array data
-                const customers = Array.isArray(data) ? data : [];
+                // Handle different response formats
+                let customers = [];
+                if (Array.isArray(data)) {
+                    // If it's already an array, use it
+                    customers = data;
+                } else if (data && typeof data === 'object') {
+                    // If it's a single object, wrap it in an array
+                    customers = [data];
+                } else {
+                    // Empty or invalid data
+                    customers = [];
+                }
 
                 // Filter active customers
                 const activeStatuses = ['WAITING', 'NOTIFIED', 'IN_SERVICE'];
