@@ -319,7 +319,7 @@
         function renderQueue(customers) {
             const container = document.getElementById('queueContainer');
 
-            if (customers.length === 0) {
+            if (!customers || customers.length === 0) {
                 container.innerHTML = `
                     <div class="empty-state">
                         <h2>No Customers in Queue</h2>
@@ -330,6 +330,11 @@
             }
 
             container.innerHTML = customers.map((customer, index) => {
+                // Safety check - skip invalid customer objects
+                if (!customer || !customer.customer_id || !customer.status) {
+                    return '';
+                }
+                
                 const statusClass = `status-${customer.status.toLowerCase().replace('_', '-')}`;
                 const checkinTime = new Date(customer.checkin_time);
                 const waitTime = Math.floor((new Date() - checkinTime) / 1000 / 60);
