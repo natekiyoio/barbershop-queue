@@ -278,11 +278,17 @@
                     customers = [];
                 }
 
-                // Filter active customers
+                // Debug: log the data we received
+                console.log('Received customers:', customers);
+
+                // Filter active customers - ensure status is uppercase and trimmed
                 const activeStatuses = ['WAITING', 'NOTIFIED', 'IN_SERVICE'];
-                const activeCustomers = customers.filter(customer => 
-                    customer && activeStatuses.includes(customer.status)
-                );
+                const activeCustomers = customers.filter(customer => {
+                    if (!customer) return false;
+                    const status = String(customer.status || '').toUpperCase().trim();
+                    console.log('Customer status:', status, 'Matches:', activeStatuses.includes(status));
+                    return activeStatuses.includes(status);
+                });
 
                 // Sort by checkin time
                 activeCustomers.sort((a, b) => 
