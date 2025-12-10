@@ -257,12 +257,21 @@
                 document.getElementById('dashboard').style.display = 'none';
 
                 const response = await fetch(CONFIG.dashboardUrl);
+                
+                // Check if response is ok
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
                 const data = await response.json();
+
+                // Handle empty response or non-array data
+                const customers = Array.isArray(data) ? data : [];
 
                 // Filter active customers
                 const activeStatuses = ['WAITING', 'NOTIFIED', 'IN_SERVICE'];
-                const activeCustomers = data.filter(customer => 
-                    activeStatuses.includes(customer.status)
+                const activeCustomers = customers.filter(customer => 
+                    customer && activeStatuses.includes(customer.status)
                 );
 
                 // Sort by checkin time
@@ -283,6 +292,7 @@
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('dashboard').style.display = 'block';
             } catch (error) {
+                console.error('Dashboard error:', error);
                 document.getElementById('loading').innerHTML = 
                     `<div style="color: #ef4444;">❌ Error loading dashboard: ${error.message}</div>
                      <button class="btn btn-refresh" onclick="loadDashboard()" style="margin-top: 20px;">Try Again</button>`;
@@ -371,51 +381,3 @@
     </script>
 </body>
 </html>
-// Load dashboard data
-        async function loadDashboard() {
-            try {
-                document.getElementById('loading').style.display = 'block';
-                document.getElementById('dashboard').style.display = 'none';
-
-                const response = await fetch(CONFIG.dashboardUrl);
-                
-                // Check if response is ok
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                }
-
-                const data = await response.json();
-
-                // Handle empty response or non-array data
-                const customers = Array.isArray(data) ? data : [];
-
-                // Filter active customers
-                const activeStatuses = ['WAITING', 'NOTIFIED', 'IN_SERVICE'];
-                const activeCustomers = customers.filter(customer => 
-                    customer && activeStatuses.includes(customer.status)
-                );
-
-                // Sort by checkin time
-                activeCustomers.sort((a, b) => 
-                    new Date(a.checkin_time) - new Date(b.checkin_time)
-                );
-
-                // Update stats
-                document.getElementById('totalActive').textContent = activeCustomers.length;
-                document.getElementById('totalWaiting').textContent = 
-                    activeCustomers.filter(c => c.status === 'WAITING').length;
-                document.getElementById('totalInService').textContent = 
-                    activeCustomers.filter(c => c.status === 'IN_SERVICE').length;
-
-                // Render queue
-                renderQueue(activeCustomers);
-
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('dashboard').style.display = 'block';
-            } catch (error) {
-                console.error('Dashboard error:', error);
-                document.getElementById('loading').innerHTML = 
-                    `<div style="color: #ef4444;">❌ Error loading dashboard: ${error.message}</div>
-                     <button class="btn btn-refresh" onclick="loadDashboard()" style="margin-top: 20px;">Try Again</button>`;
-            }
-        }
