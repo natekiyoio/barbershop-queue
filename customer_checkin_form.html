@@ -248,7 +248,7 @@
       btn.textContent = 'Adding to queue...';
       
       // Send to n8n webhook
-      fetch('https://n8n.srv1146840.hstgr.cloud/webhook-test/checkin', {
+      fetch('https://n8n.srv1146840.hstgr.cloud/webhook/checkin', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: name, phone: phone, service: service })
