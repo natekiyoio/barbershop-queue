@@ -368,29 +368,56 @@
             }).join('');
         }
 
-        // Update customer status
-        async function updateStatus(customerId, action) {
-            const endpoints = {
-                'start': CONFIG.startServiceUrl,
-                'complete': CONFIG.completeServiceUrl,
-                'cancel': CONFIG.cancelUrl,
-                'noshow': CONFIG.noShowUrl
-            };
+    // Update customer status
+async function updateStatus(customerId, action) {
+    const endpoints = {
+        'start': CONFIG.startServiceUrl,
+        'complete': CONFIG.completeServiceUrl,
+        'cancel': CONFIG.cancelUrl,
+        'noshow': CONFIG.noShowUrl
+    };
 
-            try {
-                const response = await fetch(`${endpoints[action]}?id=${customerId}`, {
-                    method: 'POST'
-                });
+    const actionNames = {
+        'start': 'Start Service',
+        'complete': 'Complete Service',
+        'cancel': 'Customer Cancel',
+        'noshow': 'Mark No Show'
+    };
 
-                if (response.ok) {
-                    loadDashboard();
-                } else {
-                    alert('❌ Failed to update status');
-                }
-            } catch (error) {
-                alert('❌ Error: ' + error.message);
-            }
+    if (!confirm(`Are you sure you want to ${actionNames[action]}?`)) {
+        return;
+    }
+
+    try {
+        console.log(`Sending ${action} request for customer ${customerId}`);
+        
+        const response = await fetch(endpoints[action], {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                customerId: customerId,
+                customer_id: customerId,  // Send both formats for compatibility
+                action: action
+            })
+        });
+
+        console.log('Response status:', response.status);
+        const responseText = await response.text();
+        console.log('Response:', responseText);
+
+        if (response.ok) {
+            alert(`✅ ${actionNames[action]} successful!`);
+            loadDashboard();  // Refresh the dashboard
+        } else {
+            alert(`❌ Failed: ${response.status} - ${responseText}`);
         }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('❌ Network Error: ' + error.message);
+    }
+}
 
         // Auto-refresh every 30 seconds
         setInterval(() => {
