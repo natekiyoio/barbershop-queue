@@ -1,276 +1,756 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Barbershop Queue - Check In</title>
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-    }
-    .container {
-      background: white;
-      border-radius: 20px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-      padding: 40px;
-      max-width: 450px;
-      width: 100%;
-    }
-    h1 {
-      color: #333;
-      text-align: center;
-      margin-bottom: 10px;
-      font-size: 32px;
-    }
-    .subtitle {
-      text-align: center;
-      color: #666;
-      margin-bottom: 30px;
-      font-size: 16px;
-    }
-    .form-group {
-      margin-bottom: 20px;
-    }
-    label {
-      display: block;
-      color: #555;
-      font-weight: 600;
-      margin-bottom: 8px;
-      font-size: 14px;
-    }
-    input, select {
-      width: 100%;
-      padding: 12px;
-      border: 2px solid #e0e0e0;
-      border-radius: 8px;
-      font-size: 16px;
-      transition: border-color 0.3s;
-    }
-    input:focus, select:focus {
-      outline: none;
-      border-color: #667eea;
-    }
-    button {
-      width: 100%;
-      padding: 14px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 18px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-    button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
-    }
-    button:active {
-      transform: translateY(0);
-    }
-    button:disabled {
-      background: #ccc;
-      cursor: not-allowed;
-      transform: none;
-    }
-    .success {
-      display: none;
-      text-align: center;
-    }
-    .success-icon {
-      width: 80px;
-      height: 80px;
-      background: #10b981;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 20px;
-      font-size: 40px;
-    }
-    .success h2 {
-      color: #10b981;
-      margin-bottom: 20px;
-      font-size: 28px;
-    }
-    .queue-info {
-      background: #f3f4f6;
-      padding: 20px;
-      border-radius: 10px;
-      margin: 20px 0;
-    }
-    .queue-row {
-      display: flex;
-      justify-content: space-between;
-      padding: 10px 0;
-      border-bottom: 1px solid #e5e7eb;
-    }
-    .queue-row:last-child {
-      border-bottom: none;
-    }
-    .queue-label {
-      color: #6b7280;
-      font-weight: 600;
-    }
-    .queue-value {
-      color: #111827;
-      font-weight: 700;
-      font-size: 18px;
-    }
-    .info-message {
-      color: #666;
-      margin: 20px 0;
-      line-height: 1.6;
-      background: #fef3c7;
-      padding: 15px;
-      border-radius: 8px;
-      border-left: 4px solid #f59e0b;
-    }
-    .info-message strong {
-      color: #92400e;
-      display: block;
-      margin-bottom: 8px;
-    }
-    .info-message em {
-      display: block;
-      margin: 8px 0;
-      font-style: normal;
-      color: #78350f;
-    }
-    .reset-btn {
-      background: white;
-      color: #667eea;
-      border: 2px solid #667eea;
-      margin-top: 15px;
-    }
-    .reset-btn:hover {
-      background: #f3f4f6;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Walk-In Check-In</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #8b5cf6;
+            --success: #10b981;
+            --bg-gradient-start: #1e1b4b;
+            --bg-gradient-end: #312e81;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 50%, #1e293b 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Animated background */
+        body::before {
+            content: '';
+            position: fixed;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.3) 0%, transparent 70%);
+            border-radius: 50%;
+            top: -200px;
+            left: -200px;
+            animation: float 20s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.3) 0%, transparent 70%);
+            border-radius: 50%;
+            bottom: -150px;
+            right: -150px;
+            animation: float 15s ease-in-out infinite reverse;
+            pointer-events: none;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            50% {
+                transform: translate(40px, 40px) scale(1.1);
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-10px);
+            }
+
+            75% {
+                transform: translateX(10px);
+            }
+        }
+
+        .container {
+            max-width: 500px;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .header h1 {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 10px;
+            letter-spacing: -0.5px;
+        }
+
+        .header p {
+            color: #64748b;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 14px;
+            letter-spacing: 0.3px;
+        }
+
+        .required {
+            color: #ef4444;
+            margin-left: 4px;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 15px;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+            background: white;
+            color: #1e293b;
+        }
+
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        input::placeholder {
+            color: #94a3b8;
+        }
+
+        select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236366f1'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 20px;
+            padding-right: 40px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:active::before {
+            width: 400px;
+            height: 400px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(99, 102, 241, 0.5);
+        }
+
+        .btn-primary:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .success-message {
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            border: 2px solid #10b981;
+            color: #065f46;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 20px;
+            display: none;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        .success-message h3 {
+            font-size: 20px;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .success-message p {
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .error-message {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            border: 2px solid #ef4444;
+            color: #991b1b;
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: none;
+            animation: slideUp 0.5s ease-out, shake 0.5s ease-out;
+        }
+
+        .error-message p {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .service-container {
+            margin-bottom: 25px;
+        }
+
+        .service-scroll {
+            max-height: 320px;
+            overflow-y: auto;
+            padding: 4px;
+            border-radius: 12px;
+            background: rgba(241, 245, 249, 0.5);
+        }
+
+        /* Custom scrollbar */
+        .service-scroll::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .service-scroll::-webkit-scrollbar-track {
+            background: rgba(226, 232, 240, 0.5);
+            border-radius: 10px;
+        }
+
+        .service-scroll::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border-radius: 10px;
+        }
+
+        .service-scroll::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--secondary) 100%);
+        }
+
+        .service-option {
+            position: relative;
+            margin-bottom: 8px;
+        }
+
+        .service-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .service-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+            gap: 12px;
+        }
+
+        .service-info {
+            flex: 1;
+            text-align: left;
+        }
+
+        .service-name {
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 15px;
+            margin-bottom: 4px;
+        }
+
+        .service-details {
+            display: flex;
+            gap: 12px;
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        .service-price {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 16px;
+            white-space: nowrap;
+        }
+
+        .service-option input[type="radio"]:checked+.service-label {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+        }
+
+        .service-option input[type="radio"]:checked+.service-label .service-name {
+            color: var(--primary);
+        }
+
+        .service-label:hover {
+            border-color: var(--primary);
+            transform: translateX(4px);
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 18px;
+            pointer-events: none;
+        }
+
+        .input-group input {
+            padding-left: 45px;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                padding: 30px 25px;
+            }
+
+            .header h1 {
+                font-size: 28px;
+            }
+
+            .service-scroll {
+                max-height: 280px;
+            }
+        }
+    </style>
 </head>
+
 <body>
-  <div class="container">
-    <!-- Check-in Form -->
-    <div id="form">
-      <h1>🪒 Welcome!</h1>
-      <p class="subtitle">Join the queue and skip the wait</p>
-      
-      <form id="checkinForm">
-        <div class="form-group">
-          <label for="name">Full Name</label>
-          <input type="text" id="name" name="name" required placeholder="John Doe">
+    <div class="container">
+        <div class="card">
+            <div class="header">
+                <h1>✂️ Walk-In Check-In</h1>
+                <p>Join the queue and we'll notify you when it's your turn</p>
+            </div>
+
+            <div id="successMessage" class="success-message">
+                <h3>✅ Check-In Successful!</h3>
+                <p>You've been added to the queue. We'll send you an SMS when it's almost your turn.</p>
+            </div>
+
+            <div id="errorMessage" class="error-message">
+                <p id="errorText"></p>
+            </div>
+
+            <form id="checkinForm">
+                <div class="form-group">
+                    <label for="name">Full Name <span class="required">*</span></label>
+                    <div class="input-group">
+                        <span class="input-icon">👤</span>
+                        <input type="text" id="name" name="name" placeholder="Enter your name" required
+                            autocomplete="name">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Phone Number <span class="required">*</span></label>
+                    <div class="input-group">
+                        <span class="input-icon">📱</span>
+                        <input type="tel" id="phone" name="phone" placeholder="(555) 123-4567" required
+                            autocomplete="tel">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Service Type <span class="required">*</span></label>
+                    <div class="service-container">
+                        <div class="service-scroll">
+                            <div class="service-option">
+                                <input type="radio" id="mens-regular" name="service" value="Men's Regular Cut"
+                                    data-duration="40" checked>
+                                <label for="mens-regular" class="service-label">
+                                    <div class="service-info">
+                                        <div class="service-name">Men's Regular Cut</div>
+                                        <div class="service-details"><span>⏱️ 40 mins</span></div>
+                                    </div>
+                                    <div class="service-price">$30</div>
+                                </label>
+                            </div>
+                            <div class="service-option">
+                                <input type="radio" id="skin-fade" name="service" value="Skin Fade (Only)"
+                                    data-duration="40">
+                                <label for="skin-fade" class="service-label">
+                                    <div class="service-info">
+                                        <div class="service-name">Skin Fade (Only)</div>
+                                        <div class="service-details"><span>⏱️ 40 mins</span></div>
+                                    </div>
+                                    <div class="service-price">$30</div>
+                                </label>
+                            </div>
+                            <div class="service-option">
+                                <input type="radio" id="skin-fade-beard" name="service"
+                                    value="Skin Fade + Beard Trim & Line Up" data-duration="60">
+                                <label for="skin-fade-beard" class="service-label">
+                                    <div class="service-info">
+                                        <div class="service-name">Skin Fade + Beard Trim & Line Up</div>
+                                        <div class="service-details"><span>⏱️ 1 Hr</span></div>
+                                    </div>
+                                    <div class="service-price">$40</div>
+                                </label>
+                            </div>
+                            <div class="service-option">
+                                <input type="radio" id="taper-fade" name="service" value="Taper Fade + Beard Line Up"
+                                    data-duration="60">
+                                <label for="taper-fade" class="service-label">
+                                    <div class="service-info">
+                                        <div class="service-name">Taper Fade + Beard Line Up</div>
+                                        <div class="service-details"><span>⏱️ 1 Hr</span></div>
+                                    </div>
+                                    <div class="service-price">$35</div>
+                                </label>
+                            </div>
+                            <div class="service-option">
+                                <input type="radio" id="hair-beard-only" name="service"
+                                    value="Hair + Beard Line Up (Only)" data-duration="20">
+                                <label for="hair-beard-only" class="service-label">
+                                    <div class="service-info">
+                                        <div class="service-name">Hair + Beard Line Up (Only)</div>
+                                        <div class="service-details"><span>⏱️ 20 mins</span></div>
+                                    </div>
+                                    <div class="service-price">$20</div>
+                                </label>
+                            </div>
+                            <div class="service-option">
+                                <input type="radio" id="womens-cut" name="service" value="Women's Hair Cut"
+                                    data-duration="40">
+                                <label for="womens-cut" class="service-label">
+                                    <div class="service-info">
+                                        <div class="service-name">Women's Hair Cut</div>
+                                        <div class="service-details"><span>⏱️ 40 mins</span></div>
+                                    </div>
+                                    <div class="service-price">$30</div>
+                                </label>
+                            </div>
+                            <div class="service-option">
+                                <input type="radio" id="seniors" name="service" value="Seniors' Haircut"
+                                    data-duration="30">
+                                <label for="seniors" class="service-label">
+                                    <div class="service-info">
+                                        <div class="service-name">Seniors' Haircut</div>
+                                        <div class="service-details"><span>⏱️ 30 mins</span></div>
+                                    </div>
+                                    <div class="service-price">$25</div>
+                                </label>
+                            </div>
+                            <div class="service-option">
+                                <input type="radio" id="kids-cut" name="service" value="Kids' Cut" data-duration="30">
+                                <label for="kids-cut" class="service-label">
+                                    <div class="service-info">
+                                        <div class="service-name">Kids' Cut</div>
+                                        <div class="service-details"><span>⏱️ 30 mins</span></div>
+                                    </div>
+                                    <div class="service-price">$20</div>
+                                </label>
+                            </div>
+                            <div class="service-option">
+                                <input type="radio" id="luxury" name="service" value="Luxury Service"
+                                    data-duration="95">
+                                <label for="luxury" class="service-label">
+                                    <div class="service-info">
+                                        <div class="service-name">Luxury Service</div>
+                                        <div class="service-details"><span>⏱️ 1 Hr 35 mins</span><span>💈 Full
+                                                Package</span></div>
+                                    </div>
+                                    <div class="service-price">$60</div>
+                                </label>
+                            </div>
+                            <div class="service-option">
+                                <input type="radio" id="mens-wash" name="service" value="Men's Wash (Buzz Cut)"
+                                    data-duration="10">
+                                <label for="mens-wash" class="service-label">
+                                    <div class="service-info">
+                                        <div class="service-name">Men's Wash (Buzz Cut)</div>
+                                        <div class="service-details"><span>⏱️ 10 mins</span></div>
+                                    </div>
+                                    <div class="service-price">$10</div>
+                                </label>
+                            </div>
+                            <div class="service-option">
+                                <input type="radio" id="wax-nose" name="service" value="Wax Nose" data-duration="5">
+                                <label for="wax-nose" class="service-label">
+                                    <div class="service-info">
+                                        <div class="service-name">Wax Nose</div>
+                                        <div class="service-details"><span>⏱️ 5 mins</span></div>
+                                    </div>
+                                    <div class="service-price">$10</div>
+                                </label>
+                            </div>
+                            <div class="service-option">
+                                <input type="radio" id="hair-design" name="service" value="Hair Design"
+                                    data-duration="5">
+                                <label for="hair-design" class="service-label">
+                                    <div class="service-info">
+                                        <div class="service-name">Hair Design</div>
+                                        <div class="service-details"><span>⏱️ 5 mins</span></div>
+                                    </div>
+                                    <div class="service-price">$5+</div>
+                                </label>
+                            </div>
+                            <div class="service-option">
+                                <input type="radio" id="eyebrow" name="service" value="Eye Brow Cut or Design"
+                                    data-duration="5">
+                                <label for="eyebrow" class="service-label">
+                                    <div class="service-info">
+                                        <div class="service-name">Eye Brow Cut or Design</div>
+                                        <div class="service-details"><span>⏱️ 5 mins</span></div>
+                                    </div>
+                                    <div class="service-price">$10</div>
+                                </label>
+                            </div>
+                            <div class="service-option">
+                                <input type="radio" id="razor-shave" name="service" value="Hot Razor Shave"
+                                    data-duration="30">
+                                <label for="razor-shave" class="service-label">
+                                    <div class="service-info">
+                                        <div class="service-name">Hot Razor Shave</div>
+                                        <div class="service-details"><span>⏱️ 30 mins</span></div>
+                                    </div>
+                                    <div class="service-price">$40+</div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary" id="submitBtn">
+                    <span id="btnText">Join Queue</span>
+                </button>
+            </form>
         </div>
-        
-        <div class="form-group">
-          <label for="phone">Phone Number</label>
-          <input type="tel" id="phone" name="phone" required placeholder="555-123-4567">
-        </div>
-        
-        <div class="form-group">
-          <label for="service">Service</label>
-          <select id="service" name="service" required>
-            <option value="">Select a service</option>
-            <option value="Haircut">Haircut</option>
-            <option value="Beard Trim">Beard Trim</option>
-            <option value="Haircut + Beard">Haircut + Beard</option>
-            <option value="Hot Towel Shave">Hot Towel Shave</option>
-          </select>
-        </div>
-        
-        <button type="submit" id="submitBtn">Join Queue</button>
-      </form>
     </div>
 
-    <!-- Success Message -->
-    <div id="success" class="success">
-      <div class="success-icon">✓</div>
-      <h2>You're in the queue!</h2>
-      
-      <div class="queue-info">
-        <div class="queue-row">
-          <span class="queue-label">Position:</span>
-          <span class="queue-value" id="position">#-</span>
-        </div>
-        <div class="queue-row">
-          <span class="queue-label">Estimated Wait:</span>
-          <span class="queue-value" id="waitTime">- mins</span>
-        </div>
-      </div>
+    <script>
+        // CONFIGURATION - Update this to your n8n webhook URL
+        const CHECKIN_URL = 'https://n8n.srv1146840.hstgr.cloud/webhook/customer-checkin';
 
-      <div class="info-message">
-        <strong>📱 You'll receive a text when you're next!</strong>
-        <em>⏱️ Please note: Wait times are estimates based on current queue and may vary.</em>
-        <p style="margin-top: 8px;">Feel free to leave and run errands nearby - we'll text you when it's your turn to return to the shop!</p>
-      </div>
-      
-      <button class="reset-btn" onclick="location.reload()">Check In Another Customer</button>
-    </div>
-  </div>
+        const form = document.getElementById('checkinForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const btnText = document.getElementById('btnText');
+        const successMessage = document.getElementById('successMessage');
+        const errorMessage = document.getElementById('errorMessage');
+        const errorText = document.getElementById('errorText');
 
-  <script>
-    // Format phone number as user types
-    document.getElementById('phone').addEventListener('input', function(e) {
-      let value = e.target.value.replace(/\D/g, '');
-      if (value.length > 10) value = value.slice(0, 10);
-      e.target.value = value;
-    });
+        // Get service duration from data attribute
+        function getServiceDuration() {
+            const selectedService = document.querySelector('input[name="service"]:checked');
+            return selectedService ? parseInt(selectedService.dataset.duration) : 40;
+        }
 
-    // Handle form submission
-    document.getElementById('checkinForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      
-      const btn = document.getElementById('submitBtn');
-      const name = document.getElementById('name').value.trim();
-      const phone = document.getElementById('phone').value.replace(/\D/g, '');
-      const service = document.getElementById('service').value;
-      
-      // Validation
-      if (!name || !phone || !service) {
-        alert('Please fill in all fields');
-        return;
-      }
-      
-      if (phone.length !== 10) {
-        alert('Please enter a valid 10-digit phone number');
-        return;
-      }
-      
-      // Disable button and show loading
-      btn.disabled = true;
-      btn.textContent = 'Adding to queue...';
-      
-      // Send to n8n webhook
-      fetch('https://n8n.srv1146840.hstgr.cloud/webhook/checkin', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: name, phone: phone, service: service })
-      })
-      .then(function(response) {
-        return response.json();
-      })
-      .then(function(data) {
-        // Update position and wait time with actual data
-        document.getElementById('position').textContent = '#' + (data.position || '?');
-        document.getElementById('waitTime').textContent = (data.estimated_wait || '?') + ' mins';
-        
-        // Show success message
-        document.getElementById('form').style.display = 'none';
-        document.getElementById('success').style.display = 'block';
-      })
-      .catch(function(error) {
-        alert('Error: ' + error.message);
-        btn.disabled = false;
-        btn.textContent = 'Join Queue';
-      });
-    });
-  </script>
+        // Format phone number as user types
+        document.getElementById('phone').addEventListener('input', function (e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 10) value = value.slice(0, 10);
+
+            if (value.length >= 6) {
+                e.target.value = `(${value.slice(0, 3)}) ${value.slice(3, 6)}-${value.slice(6)}`;
+            } else if (value.length >= 3) {
+                e.target.value = `(${value.slice(0, 3)}) ${value.slice(3)}`;
+            } else {
+                e.target.value = value;
+            }
+        });
+
+        // Handle form submission
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Hide previous messages
+            successMessage.style.display = 'none';
+            errorMessage.style.display = 'none';
+
+            // Disable button and show loading
+            submitBtn.disabled = true;
+            btnText.innerHTML = '<span class="loading-spinner"></span>Joining Queue...';
+
+            try {
+                // Get form data
+                const name = document.getElementById('name').value.trim();
+                const phone = document.getElementById('phone').value.replace(/\D/g, ''); // Remove formatting
+                const service = document.querySelector('input[name="service"]:checked').value;
+                const serviceDuration = getServiceDuration();
+
+                // Validate
+                if (!name || !phone || !service) {
+                    throw new Error('Please fill in all required fields');
+                }
+
+                if (phone.length !== 10) {
+                    throw new Error('Please enter a valid 10-digit phone number');
+                }
+
+                // Send to n8n
+                const response = await fetch(CHECKIN_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: name,
+                        phone: phone,
+                        service: service,
+                        service_duration: serviceDuration
+                    })
+                });
+
+                console.log('Response status:', response.status);
+                const responseText = await response.text();
+                console.log('Response:', responseText);
+
+                if (response.ok) {
+                    // Show success message
+                    successMessage.style.display = 'block';
+
+                    // Reset form
+                    form.reset();
+
+                    // Scroll to success message
+                    successMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                    // Re-enable button after 2 seconds
+                    setTimeout(() => {
+                        submitBtn.disabled = false;
+                        btnText.textContent = 'Join Queue';
+                        successMessage.style.display = 'none';
+                    }, 3000);
+                } else {
+                    throw new Error(`Server error: ${response.status} - ${responseText}`);
+                }
+            } catch (error) {
+                console.error('Check-in error:', error);
+
+                // Show error message
+                errorText.textContent = `❌ ${error.message}`;
+                errorMessage.style.display = 'block';
+
+                // Re-enable button
+                submitBtn.disabled = false;
+                btnText.textContent = 'Join Queue';
+
+                // Hide error after 5 seconds
+                setTimeout(() => {
+                    errorMessage.style.display = 'none';
+                }, 5000);
+            }
+        });
+    </script>
 </body>
+
 </html>
