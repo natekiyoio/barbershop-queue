@@ -24,6 +24,12 @@
             --bg-gradient-end: #312e81;
         }
 
+        html {
+            height: auto;
+            overflow-y: visible;
+            scroll-behavior: smooth;
+        }
+
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 50%, #1e293b 100%);
@@ -31,13 +37,12 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: flex-start;
-            /* Better for natural scrolling */
+            justify-content: center;
             padding: 40px 20px;
             position: relative;
             overflow-x: hidden;
             overflow-y: auto;
-            /* Ensure vertical scrolling is enabled */
+            -webkit-overflow-scrolling: touch;
         }
 
         /* Animated background */
@@ -306,6 +311,19 @@
 
         /* Responsive adjustments for scrolling */
         @media (max-width: 600px) {
+            body {
+                display: block;
+                /* Remove flex to avoid Safari centering/scroll bugs */
+                padding: 20px 15px 120px 15px;
+                /* Extra bottom padding for mobile browser bars */
+                overflow-y: scroll;
+                /* Force scrollbar visibility */
+            }
+
+            .container {
+                margin: 0 auto;
+            }
+
             .service-scroll {
                 max-height: none;
                 /* Disable internal scroll on small mobiles to avoid scroll trap */
@@ -318,11 +336,16 @@
                 padding: 18px 16px;
                 /* Larger tap targets */
                 margin-bottom: 12px;
+                transform: none !important;
+                /* Avoid shifting on mobile */
             }
 
             .card {
                 padding: 30px 20px;
                 margin-top: 0;
+                box-shadow: none;
+                /* Simplify on mobile */
+                border-radius: 20px;
             }
         }
 
