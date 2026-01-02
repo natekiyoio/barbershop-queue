@@ -309,43 +309,46 @@
             /* Smooth scrolling on iOS */
         }
 
-        /* Responsive adjustments for scrolling */
+        /* Consolidated Mobile Styles */
         @media (max-width: 600px) {
             body {
                 display: block;
-                /* Remove flex to avoid Safari centering/scroll bugs */
-                padding: 20px 15px 120px 15px;
-                /* Extra bottom padding for mobile browser bars */
-                overflow-y: scroll;
-                /* Force scrollbar visibility */
+                /* Force block layout to avoid scroll bugs */
+                padding: 20px 12px 60px 12px;
+                overflow-y: auto;
             }
 
             .container {
                 margin: 0 auto;
             }
 
+            .card {
+                padding: 24px 16px;
+                border-radius: 20px;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            }
+
+            .header h1 {
+                font-size: 26px;
+            }
+
             .service-scroll {
-                max-height: none;
-                /* Disable internal scroll on small mobiles to avoid scroll trap */
-                overflow-y: visible;
-                background: transparent;
-                padding: 0;
+                max-height: 400px;
+                /* Contained scroll to prevent overlap */
+                overflow-y: auto !important;
+                background: rgba(241, 245, 249, 0.4);
+                padding: 4px;
+                border: 1px solid #e2e8f0;
             }
 
             .service-label {
-                padding: 18px 16px;
-                /* Larger tap targets */
-                margin-bottom: 12px;
-                transform: none !important;
-                /* Avoid shifting on mobile */
+                padding: 16px 12px;
+                margin-bottom: 10px;
             }
 
-            .card {
-                padding: 30px 20px;
-                margin-top: 0;
-                box-shadow: none;
-                /* Simplify on mobile */
-                border-radius: 20px;
+            .btn {
+                margin-top: 10px;
+                /* Ensure space after the service list */
             }
         }
 
@@ -488,20 +491,6 @@
         @keyframes spin {
             to {
                 transform: rotate(360deg);
-            }
-        }
-
-        @media (max-width: 480px) {
-            .card {
-                padding: 30px 25px;
-            }
-
-            .header h1 {
-                font-size: 28px;
-            }
-
-            .service-scroll {
-                max-height: 280px;
             }
         }
     </style>
