@@ -400,6 +400,29 @@
             padding-left: 45px;
         }
 
+        /* Phone input with country code */
+        .phone-input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .country-code {
+            position: absolute;
+            left: 45px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 15px;
+            font-weight: 600;
+            color: #1e293b;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .phone-input-wrapper input {
+            padding-left: 80px;
+        }
+
         .loading-spinner {
             display: inline-block;
             width: 20px;
@@ -462,10 +485,11 @@
 
                 <div class="form-group">
                     <label for="phone">Phone Number <span class="required">*</span></label>
-                    <div class="input-group">
+                    <div class="input-group phone-input-wrapper">
                         <span class="input-icon">📱</span>
+                        <span class="country-code">+1</span>
                         <input type="tel" id="phone" name="phone" placeholder="(555) 123-4567" required
-                            autocomplete="tel">
+                            autocomplete="tel-national">
                     </div>
                 </div>
 
@@ -647,6 +671,7 @@
         const successMessage = document.getElementById('successMessage');
         const errorMessage = document.getElementById('errorMessage');
         const errorText = document.getElementById('errorText');
+        const phoneInput = document.getElementById('phone');
 
         // Get service duration from data attribute
         function getServiceDuration() {
@@ -654,19 +679,82 @@
             return selectedService ? parseInt(selectedService.dataset.duration) : 40;
         }
 
-        // Format phone number as user types
-        document.getElementById('phone').addEventListener('input', function (e) {
-            let value = e.target.value.replace(/\D/g, '');
-            if (value.length > 10) value = value.slice(0, 10);
+        /**
+         * Normalize phone number - handles all autofill formats
+         * Strips country code (+1, 1) and formats to 10-digit US number
+         */
+        function normalizePhoneNumber(value) {
+            // Remove all non-digit characters
+            let digits = value.replace(/\D/g, '');
 
-            if (value.length >= 6) {
-                e.target.value = `(${value.slice(0, 3)}) ${value.slice(3, 6)}-${value.slice(6)}`;
-            } else if (value.length >= 3) {
-                e.target.value = `(${value.slice(0, 3)}) ${value.slice(3)}`;
-            } else {
-                e.target.value = value;
+            // Handle country code - if 11 digits and starts with 1, remove the 1
+            if (digits.length === 11 && digits.startsWith('1')) {
+                digits = digits.substring(1);
             }
+
+            // If still more than 10 digits, take the last 10 (most likely the actual number)
+            if (digits.length > 10) {
+                digits = digits.slice(-10);
+            }
+
+            return digits;
+        }
+
+        /**
+         * Format phone number for display
+         */
+        function formatPhoneDisplay(digits) {
+            if (digits.length === 0) return '';
+            if (digits.length <= 3) return digits;
+            if (digits.length <= 6) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
+            return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6, 10)}`;
+        }
+
+        /**
+         * Handle phone input - works with typing AND autofill
+         */
+        function handlePhoneInput(e) {
+            const cursorPosition = e.target.selectionStart;
+            const oldValue = e.target.value;
+            const oldLength = oldValue.length;
+
+            // Normalize and format
+            const digits = normalizePhoneNumber(e.target.value);
+            const formatted = formatPhoneDisplay(digits);
+
+            // Update input value
+            e.target.value = formatted;
+
+            // Try to maintain cursor position for manual typing
+            if (e.inputType && !e.inputType.includes('delete')) {
+                const newLength = formatted.length;
+                const diff = newLength - oldLength;
+                let newPosition = cursorPosition + diff;
+
+                // Adjust for formatting characters
+                if (newPosition > formatted.length) newPosition = formatted.length;
+                if (newPosition < 0) newPosition = 0;
+
+                // Delay to let the value update first
+                setTimeout(() => {
+                    e.target.setSelectionRange(newPosition, newPosition);
+                }, 0);
+            }
+        }
+
+        // Listen for input (handles both typing and autofill)
+        phoneInput.addEventListener('input', handlePhoneInput);
+
+        // Also handle paste events explicitly
+        phoneInput.addEventListener('paste', function (e) {
+            // Let the paste happen, then normalize
+            setTimeout(() => {
+                handlePhoneInput({ target: e.target });
+            }, 0);
         });
+
+        // Handle autofill detection via change event
+        phoneInput.addEventListener('change', handlePhoneInput);
 
         // Handle form submission
         form.addEventListener('submit', async (e) => {
@@ -683,7 +771,7 @@
             try {
                 // Get form data
                 const name = document.getElementById('name').value.trim();
-                const phone = document.getElementById('phone').value.replace(/\D/g, ''); // Remove formatting
+                const phone = normalizePhoneNumber(phoneInput.value); // Use normalized phone
                 const service = document.querySelector('input[name="service"]:checked').value;
                 const serviceDuration = getServiceDuration();
 
@@ -696,7 +784,7 @@
                     throw new Error('Please enter a valid 10-digit phone number');
                 }
 
-                // Send to n8n
+                // Send to n8n (phone is already normalized to 10 digits)
                 const response = await fetch(CHECKIN_URL, {
                     method: 'POST',
                     headers: {
