@@ -24,16 +24,25 @@
             --bg-gradient-end: #312e81;
         }
 
+        html {
+            height: auto;
+            overflow-y: visible;
+            scroll-behavior: smooth;
+        }
+
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 50%, #1e293b 100%);
             min-height: 100vh;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            padding: 40px 20px;
             position: relative;
-            overflow: hidden;
+            overflow-x: hidden;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         /* Animated background */
@@ -296,6 +305,51 @@
             padding: 4px;
             border-radius: 12px;
             background: rgba(241, 245, 249, 0.5);
+            -webkit-overflow-scrolling: touch;
+            /* Smooth scrolling on iOS */
+        }
+
+        /* Consolidated Mobile Styles */
+        @media (max-width: 600px) {
+            body {
+                display: block;
+                /* Force block layout to avoid scroll bugs */
+                padding: 20px 12px 60px 12px;
+                overflow-y: auto;
+            }
+
+            .container {
+                margin: 0 auto;
+            }
+
+            .card {
+                padding: 24px 16px;
+                border-radius: 20px;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            }
+
+            .header h1 {
+                font-size: 26px;
+            }
+
+            .service-scroll {
+                max-height: 400px;
+                /* Contained scroll to prevent overlap */
+                overflow-y: auto !important;
+                background: rgba(241, 245, 249, 0.4);
+                padding: 4px;
+                border: 1px solid #e2e8f0;
+            }
+
+            .service-label {
+                padding: 16px 12px;
+                margin-bottom: 10px;
+            }
+
+            .btn {
+                margin-top: 10px;
+                /* Ensure space after the service list */
+            }
         }
 
         /* Custom scrollbar */
@@ -400,35 +454,27 @@
             padding-left: 45px;
         }
 
-        .loading-spinner {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-top-color: white;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-right: 10px;
+        /* Phone input with country code */
+        .phone-input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
         }
 
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
+        .country-code {
+            position: absolute;
+            left: 45px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 15px;
+            font-weight: 600;
+            color: #1e293b;
+            pointer-events: none;
+            z-index: 1;
         }
 
-        @media (max-width: 480px) {
-            .card {
-                padding: 30px 25px;
-            }
-
-            .header h1 {
-                font-size: 28px;
-            }
-
-            .service-scroll {
-                max-height: 280px;
-            }
+        .phone-input-wrapper input {
+            padding-left: 80px;
         }
 
         /* Fullscreen Success Overlay */
@@ -572,10 +618,6 @@
                 <p>Join the queue and we'll notify you when it's your turn</p>
             </div>
 
-            <div id="successMessage" class="success-message">
-                <h3>✅ Check-In Successful!</h3>
-                <p>You've been added to the queue. We'll send you an SMS when it's almost your turn.</p>
-            </div>
 
             <div id="errorMessage" class="error-message">
                 <p id="errorText"></p>
@@ -593,10 +635,11 @@
 
                 <div class="form-group">
                     <label for="phone">Phone Number <span class="required">*</span></label>
-                    <div class="input-group">
+                    <div class="input-group phone-input-wrapper">
                         <span class="input-icon">📱</span>
+                        <span class="country-code">+1</span>
                         <input type="tel" id="phone" name="phone" placeholder="(555) 123-4567" required
-                            autocomplete="tel">
+                            autocomplete="tel-national">
                     </div>
                 </div>
 
@@ -768,16 +811,31 @@
         </div>
     </div>
 
+    <!-- Fullscreen Success Overlay -->
+    <div id="successOverlay">
+        <div class="success-icon-wrap">
+            <span class="success-checkmark">✅</span>
+        </div>
+        <div class="success-content">
+            <h2>You're in line!</h2>
+            <p>We've added you to the queue. Keep an eye on your phone—we'll text you when it's time to head in.</p>
+            <div class="success-actions">
+                <button class="btn btn-primary" onclick="resetForm()">Done</button>
+                <button class="btn btn-secondary" onclick="resetForm()">Check in another customer</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // CONFIGURATION - Update this to your n8n webhook URL
-        const CHECKIN_URL = 'https://n8n.srv1146840.hstgr.cloud/webhook/customer-checkin';
+        const CHECKIN_URL = 'https://n8n.srv1146840.hstgr.cloud/webhook/checkin';
 
         const form = document.getElementById('checkinForm');
         const submitBtn = document.getElementById('submitBtn');
         const btnText = document.getElementById('btnText');
-        const successMessage = document.getElementById('successMessage');
         const errorMessage = document.getElementById('errorMessage');
         const errorText = document.getElementById('errorText');
+        const phoneInput = document.getElementById('phone');
 
         // Get service duration from data attribute
         function getServiceDuration() {
@@ -785,26 +843,88 @@
             return selectedService ? parseInt(selectedService.dataset.duration) : 40;
         }
 
-        // Format phone number as user types
-        document.getElementById('phone').addEventListener('input', function (e) {
-            let value = e.target.value.replace(/\D/g, '');
-            if (value.length > 10) value = value.slice(0, 10);
+        /**
+         * Normalize phone number - handles all autofill formats
+         * Strips country code (+1, 1) and formats to 10-digit US number
+         */
+        function normalizePhoneNumber(value) {
+            // Remove all non-digit characters
+            let digits = value.replace(/\D/g, '');
 
-            if (value.length >= 6) {
-                e.target.value = `(${value.slice(0, 3)}) ${value.slice(3, 6)}-${value.slice(6)}`;
-            } else if (value.length >= 3) {
-                e.target.value = `(${value.slice(0, 3)}) ${value.slice(3)}`;
-            } else {
-                e.target.value = value;
+            // Handle country code - if 11 digits and starts with 1, remove the 1
+            if (digits.length === 11 && digits.startsWith('1')) {
+                digits = digits.substring(1);
             }
+
+            // If still more than 10 digits, take the last 10 (most likely the actual number)
+            if (digits.length > 10) {
+                digits = digits.slice(-10);
+            }
+
+            return digits;
+        }
+
+        /**
+         * Format phone number for display
+         */
+        function formatPhoneDisplay(digits) {
+            if (digits.length === 0) return '';
+            if (digits.length <= 3) return digits;
+            if (digits.length <= 6) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
+            return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6, 10)}`;
+        }
+
+        /**
+         * Handle phone input - works with typing AND autofill
+         */
+        function handlePhoneInput(e) {
+            const cursorPosition = e.target.selectionStart;
+            const oldValue = e.target.value;
+            const oldLength = oldValue.length;
+
+            // Normalize and format
+            const digits = normalizePhoneNumber(e.target.value);
+            const formatted = formatPhoneDisplay(digits);
+
+            // Update input value
+            e.target.value = formatted;
+
+            // Try to maintain cursor position for manual typing
+            if (e.inputType && !e.inputType.includes('delete')) {
+                const newLength = formatted.length;
+                const diff = newLength - oldLength;
+                let newPosition = cursorPosition + diff;
+
+                // Adjust for formatting characters
+                if (newPosition > formatted.length) newPosition = formatted.length;
+                if (newPosition < 0) newPosition = 0;
+
+                // Delay to let the value update first
+                setTimeout(() => {
+                    e.target.setSelectionRange(newPosition, newPosition);
+                }, 0);
+            }
+        }
+
+        // Listen for input (handles both typing and autofill)
+        phoneInput.addEventListener('input', handlePhoneInput);
+
+        // Also handle paste events explicitly
+        phoneInput.addEventListener('paste', function (e) {
+            // Let the paste happen, then normalize
+            setTimeout(() => {
+                handlePhoneInput({ target: e.target });
+            }, 0);
         });
+
+        // Handle autofill detection via change event
+        phoneInput.addEventListener('change', handlePhoneInput);
 
         // Handle form submission
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            // Hide previous messages
-            successMessage.style.display = 'none';
+            // Hide previous error message
             errorMessage.style.display = 'none';
 
             // Disable button and show loading
@@ -814,7 +934,7 @@
             try {
                 // Get form data
                 const name = document.getElementById('name').value.trim();
-                const phone = document.getElementById('phone').value.replace(/\D/g, ''); // Remove formatting
+                const phone = normalizePhoneNumber(phoneInput.value); // Use normalized phone
                 const service = document.querySelector('input[name="service"]:checked').value;
                 const serviceDuration = getServiceDuration();
 
@@ -827,18 +947,7 @@
                     throw new Error('Please enter a valid 10-digit phone number');
                 }
 
-                // Debug logging
-                console.log('=== CHECK-IN FORM DEBUG ===');
-                console.log('Service selected:', service);
-                console.log('Service duration:', serviceDuration, 'minutes');
-                console.log('Payload being sent:', {
-                    name: name,
-                    phone: phone,
-                    service: service,
-                    service_duration: serviceDuration
-                });
-
-                // Send to n8n
+                // Send to n8n (phone is already normalized to 10 digits)
                 const response = await fetch(CHECKIN_URL, {
                     method: 'POST',
                     headers: {
@@ -867,19 +976,12 @@
                 }
             } catch (error) {
                 console.error('Check-in error:', error);
-
-                // Show error message
                 errorText.textContent = `❌ ${error.message}`;
                 errorMessage.style.display = 'block';
-
-                // Re-enable button
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } finally {
                 submitBtn.disabled = false;
                 btnText.textContent = 'Join Queue';
-
-                // Hide error after 5 seconds
-                setTimeout(() => {
-                    errorMessage.style.display = 'none';
-                }, 5000);
             }
         });
 
@@ -888,22 +990,11 @@
             document.getElementById('successOverlay').style.display = 'none';
             document.body.style.overflow = ''; // Restore scrolling
             window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            // Ensure first service is checked as default if needed
+            // (form.reset() already does this if it was checked in HTML)
         }
     </script>
-    <!-- Fullscreen Success Overlay -->
-    <div id="successOverlay">
-        <div class="success-icon-wrap">
-            <span class="success-checkmark">✅</span>
-        </div>
-        <div class="success-content">
-            <h2>You're in line!</h2>
-            <p>We've added you to the queue. Keep an eye on your phone—we'll text you when it's time to head in.</p>
-            <div class="success-actions">
-                <button class="btn btn-primary" onclick="resetForm()">Done</button>
-                <button class="btn btn-secondary" onclick="resetForm()">Check in another customer</button>
-            </div>
-        </div>
-    </div>
 </body>
 
 </html>
