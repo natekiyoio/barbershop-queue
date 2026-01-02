@@ -761,6 +761,60 @@
             color: #475569;
         }
 
+        /* Card removal animation */
+        @keyframes cardSlideOut {
+            0% {
+                opacity: 1;
+                transform: translateX(0) scale(1);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateX(100px) scale(0.9);
+            }
+        }
+
+        .queue-card.removing {
+            animation: cardSlideOut 0.4s ease-out forwards;
+            pointer-events: none;
+        }
+
+        /* Card status change animation */
+        @keyframes cardPulse {
+
+            0%,
+            100% {
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            }
+
+            50% {
+                box-shadow: 0 10px 40px rgba(16, 185, 129, 0.4);
+            }
+        }
+
+        .queue-card.updating {
+            animation: cardPulse 0.6s ease-in-out;
+        }
+
+        /* Button loading state */
+        .btn.loading {
+            opacity: 0.7;
+            pointer-events: none;
+            position: relative;
+        }
+
+        .btn.loading::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            right: 10px;
+        }
+
         .loading {
             text-align: center;
             padding: 60px;
@@ -1155,7 +1209,7 @@
                 const waitTime = Math.floor((new Date() - checkinTime) / 1000 / 60);
 
                 return `
-                    <div class="queue-card">
+                    <div class="queue-card" data-customer-id="${customer.customer_id}">
                         <div class="position-badge">#${index + 1}</div>
                         <div class="queue-header">
                             <div class="customer-info">
@@ -1197,8 +1251,40 @@
             }).join('');
         }
 
-        // Update customer status
-        async function updateStatus(customerId, action) {
+        // Show toast notification
+        function showToast(message, isError = false) {
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: linear-gradient(135deg, ${isError ? '#ef4444, #dc2626' : '#10b981, #059669'});
+                color: white;
+                padding: 15px 25px;
+                border-radius: 12px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+                z-index: 9999;
+                font-weight: 600;
+                transform: translateX(120%);
+                transition: transform 0.3s ease;
+            `;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+
+            // Animate in
+            requestAnimationFrame(() => {
+                toast.style.transform = 'translateX(0)';
+            });
+
+            // Animate out and remove
+            setTimeout(() => {
+                toast.style.transform = 'translateX(120%)';
+                setTimeout(() => toast.remove(), 300);
+            }, 2500);
+        }
+
+        // Update customer status - OPTIMISTIC UI
+        async function updateStatus(customerId, action, buttonElement) {
             const endpoints = {
                 'start': CONFIG.startServiceUrl,
                 'complete': CONFIG.completeServiceUrl,
@@ -1208,15 +1294,72 @@
 
             const actionNames = {
                 'start': 'Start Service',
-                'complete': 'Complete Service',
-                'cancel': 'Customer Cancel',
-                'noshow': 'Mark No Show'
+                'complete': 'Complete',
+                'cancel': 'Cancelled',
+                'noshow': 'No Show'
             };
 
-            if (!confirm(`Are you sure you want to ${actionNames[action]}?`)) {
+            // Find the card element
+            const card = document.querySelector(`[data-customer-id="${customerId}"]`);
+            if (!card) {
+                console.error('Card not found for customer:', customerId);
                 return;
             }
 
+            // Find the clicked button and add loading state
+            const buttons = card.querySelectorAll('.btn');
+            buttons.forEach(btn => btn.classList.add('loading'));
+
+            // OPTIMISTIC UI: Immediately animate the card based on action
+            if (action === 'complete' || action === 'cancel' || action === 'noshow') {
+                // These actions remove the customer - animate out immediately
+                card.classList.add('removing');
+
+                // Update stats immediately
+                const activeEl = document.getElementById('totalActive');
+                const waitingEl = document.getElementById('totalWaiting');
+                const inServiceEl = document.getElementById('totalInService');
+
+                const currentActive = parseInt(activeEl.textContent) || 0;
+                activeEl.textContent = Math.max(0, currentActive - 1);
+
+                // Adjust waiting/in-service based on current card status
+                const statusBadge = card.querySelector('.status-badge');
+                if (statusBadge) {
+                    const status = statusBadge.textContent.trim().toUpperCase();
+                    if (status === 'WAITING' || status === 'NOTIFIED') {
+                        const currentWaiting = parseInt(waitingEl.textContent) || 0;
+                        waitingEl.textContent = Math.max(0, currentWaiting - 1);
+                    } else if (status === 'IN_SERVICE') {
+                        const currentInService = parseInt(inServiceEl.textContent) || 0;
+                        inServiceEl.textContent = Math.max(0, currentInService - 1);
+                    }
+                }
+            } else if (action === 'start') {
+                // Start service - update the card status visually
+                card.classList.add('updating');
+                const statusBadge = card.querySelector('.status-badge');
+                if (statusBadge) {
+                    statusBadge.className = 'status-badge status-in-service';
+                    statusBadge.textContent = 'IN_SERVICE';
+                }
+                // Hide the start button
+                const startBtn = card.querySelector('.btn-start');
+                if (startBtn) startBtn.style.display = 'none';
+
+                // Update stats
+                const waitingEl = document.getElementById('totalWaiting');
+                const inServiceEl = document.getElementById('totalInService');
+                const currentWaiting = parseInt(waitingEl.textContent) || 0;
+                const currentInService = parseInt(inServiceEl.textContent) || 0;
+                waitingEl.textContent = Math.max(0, currentWaiting - 1);
+                inServiceEl.textContent = currentInService + 1;
+            }
+
+            // Show immediate feedback
+            showToast(`✅ ${actionNames[action]} - Processing...`);
+
+            // Send request to server in background
             try {
                 console.log(`Sending ${action} request for customer ${customerId}`);
 
@@ -1233,24 +1376,34 @@
                 });
 
                 console.log('Response status:', response.status);
-                const responseText = await response.text();
-                console.log('Response:', responseText);
 
                 if (response.ok) {
-                    // Show success message
-                    const successMsg = document.createElement('div');
-                    successMsg.style.cssText = 'position:fixed;top:20px;right:20px;background:linear-gradient(135deg,#10b981,#059669);color:white;padding:15px 25px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,0.3);z-index:9999;font-weight:600;';
-                    successMsg.textContent = `✅ ${actionNames[action]} successful!`;
-                    document.body.appendChild(successMsg);
-                    setTimeout(() => successMsg.remove(), 3000);
-
-                    loadDashboard();
+                    // Success! Remove card from DOM after animation completes
+                    if (action === 'complete' || action === 'cancel' || action === 'noshow') {
+                        setTimeout(() => {
+                            card.remove();
+                            // Check if queue is now empty
+                            const container = document.getElementById('queueContainer');
+                            if (!container.querySelector('.queue-card')) {
+                                showEmptyState();
+                            }
+                        }, 400);
+                    } else {
+                        // For start service, remove loading state
+                        buttons.forEach(btn => btn.classList.remove('loading'));
+                        setTimeout(() => card.classList.remove('updating'), 600);
+                    }
                 } else {
-                    alert(`❌ Failed: ${response.status} - ${responseText}`);
+                    // Server error - revert UI and show error
+                    console.error('Server error:', response.status);
+                    showToast('❌ Server error - refreshing...', true);
+                    setTimeout(() => loadDashboard(), 1000);
                 }
             } catch (error) {
-                console.error('Error:', error);
-                alert('❌ Network Error: ' + error.message);
+                // Network error - revert UI
+                console.error('Network error:', error);
+                showToast('❌ Connection error - refreshing...', true);
+                setTimeout(() => loadDashboard(), 1000);
             }
         }
 
