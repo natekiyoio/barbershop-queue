@@ -683,22 +683,21 @@
          * Normalize phone number - handles all autofill formats
          * Strips country code (+1, 1) and formats to 10-digit US number
          */
-        function normalizePhoneNumber(value) {
-            // Remove all non-digit characters
-            let digits = value.replace(/\D/g, '');
-
-            // Handle country code - if 11 digits and starts with 1, remove the 1
-            if (digits.length === 11 && digits.startsWith('1')) {
-                digits = digits.substring(1);
-            }
-
-            // If still more than 10 digits, take the last 10 (most likely the actual number)
-            if (digits.length > 10) {
-                digits = digits.slice(-10);
-            }
-
-            return digits;
-        }
+       function normalizePhoneNumber(value) {
+    let digits = value.replace(/\D/g, '');
+    
+    // Handle country code - if 11 digits starting with 1, strip it
+    if (digits.length === 11 && digits.startsWith('1')) {
+        digits = digits.substring(1);
+    }
+    
+    // Safety: if still >10 digits, take the LAST 10
+    if (digits.length > 10) {
+        digits = digits.slice(-10);
+    }
+    
+    return digits;
+}
 
         /**
          * Format phone number for display
