@@ -43,7 +43,6 @@
             overflow-x: hidden;
         }
 
-        /* Animated background elements */
         body::before {
             content: '';
             position: fixed;
@@ -108,59 +107,6 @@
             }
         }
 
-        @keyframes shimmer {
-            0% {
-                background-position: -200% 0;
-            }
-
-            100% {
-                background-position: 200% 0;
-            }
-        }
-
-        @keyframes breathe {
-
-            0%,
-            100% {
-                transform: scale(1);
-                opacity: 0.8;
-            }
-
-            50% {
-                transform: scale(1.05);
-                opacity: 1;
-            }
-        }
-
-        @keyframes rotate {
-            from {
-                transform: rotate(0deg);
-            }
-
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        @keyframes bounce {
-
-            0%,
-            20%,
-            50%,
-            80%,
-            100% {
-                transform: translateY(0);
-            }
-
-            40% {
-                transform: translateY(-20px);
-            }
-
-            60% {
-                transform: translateY(-10px);
-            }
-        }
-
         .container {
             max-width: 1400px;
             margin: 0 auto;
@@ -179,6 +125,15 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
         .header h1 {
             background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             -webkit-background-clip: text;
@@ -186,15 +141,30 @@
             background-clip: text;
             font-size: 36px;
             font-weight: 800;
-            margin-bottom: 10px;
             letter-spacing: -0.5px;
+        }
+
+        .back-btn {
+            display: none;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
         }
 
         .stats {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 20px;
-            margin-top: 25px;
         }
 
         .stat {
@@ -208,7 +178,6 @@
         .stat:hover {
             transform: translateY(-5px);
             box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
-            border-color: rgba(99, 102, 241, 0.4);
         }
 
         .stat-number {
@@ -238,6 +207,191 @@
             animation: slideUp 0.6s ease-out 0.1s backwards;
         }
 
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-refresh {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+        }
+
+        .btn-refresh:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-start {
+            background: linear-gradient(135deg, var(--success) 0%, var(--success-dark) 100%);
+            color: white;
+        }
+
+        .btn-start:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-complete {
+            background: linear-gradient(135deg, var(--info) 0%, var(--info-dark) 100%);
+            color: white;
+        }
+
+        .btn-complete:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-noshow {
+            background: linear-gradient(135deg, var(--danger) 0%, var(--danger-dark) 100%);
+            color: white;
+        }
+
+        .btn-noshow:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4);
+        }
+
+        .btn-cancel {
+            background: linear-gradient(135deg, var(--warning) 0%, var(--warning-dark) 100%);
+            color: white;
+        }
+
+        .btn-cancel:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(245, 158, 11, 0.4);
+        }
+
+        /* Barber Hub Section */
+        .barber-hub {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        .barber-hub-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .barber-hub-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+
+        .barber-hub-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .barber-hub-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .barber-avatar-large {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            margin: 0 auto 20px;
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
+        }
+
+        .barber-hub-name {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1e293b;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .barber-hub-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .barber-stat-mini {
+            text-align: center;
+            padding: 12px;
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 10px;
+        }
+
+        .barber-stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
+            display: block;
+        }
+
+        .barber-stat-label {
+            font-size: 11px;
+            color: #64748b;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+
+        .wait-time-display {
+            text-align: center;
+            padding: 15px;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.1));
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+
+        .wait-time-label {
+            font-size: 12px;
+            color: #64748b;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .wait-time-value {
+            font-size: 28px;
+            font-weight: 800;
+            color: #10b981;
+        }
+
+        /* Queue Cards */
         .queue-card {
             background: var(--card-bg);
             backdrop-filter: blur(10px);
@@ -274,35 +428,6 @@
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
         }
 
-        .queue-card:nth-child(1) {
-            animation-delay: 0.1s;
-        }
-
-        .queue-card:nth-child(2) {
-            animation-delay: 0.2s;
-        }
-
-        .queue-card:nth-child(3) {
-            animation-delay: 0.3s;
-        }
-
-        .queue-card:nth-child(4) {
-            animation-delay: 0.4s;
-        }
-
-        .queue-card:nth-child(5) {
-            animation-delay: 0.5s;
-        }
-
-        .queue-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 20px;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-
         .position-badge {
             position: absolute;
             top: 20px;
@@ -320,17 +445,11 @@
             box-shadow: 0 5px 15px rgba(99, 102, 241, 0.4);
         }
 
-        .customer-info {
-            flex: 1;
-            min-width: 250px;
-        }
-
         .customer-name {
             font-size: 24px;
             font-weight: 700;
             color: #1e293b;
             margin-bottom: 10px;
-            letter-spacing: -0.3px;
         }
 
         .customer-details {
@@ -389,359 +508,6 @@
             margin-top: 20px;
         }
 
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
-        }
-
-        .btn:active::before {
-            width: 300px;
-            height: 300px;
-        }
-
-        .btn:active {
-            transform: scale(0.95);
-        }
-
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .btn-start {
-            background: linear-gradient(135deg, var(--success) 0%, var(--success-dark) 100%);
-            color: white;
-        }
-
-        .btn-start:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
-        }
-
-        .btn-complete {
-            background: linear-gradient(135deg, var(--info) 0%, var(--info-dark) 100%);
-            color: white;
-        }
-
-        .btn-complete:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
-        }
-
-        .btn-noshow {
-            background: linear-gradient(135deg, var(--danger) 0%, var(--danger-dark) 100%);
-            color: white;
-        }
-
-        .btn-noshow:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4);
-        }
-
-        .btn-cancel {
-            background: linear-gradient(135deg, var(--warning) 0%, var(--warning-dark) 100%);
-            color: white;
-        }
-
-        .btn-cancel:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(245, 158, 11, 0.4);
-        }
-
-        .btn-refresh {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            color: white;
-        }
-
-        .btn-refresh:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
-        }
-
-        /* Enhanced Empty State Styles */
-        .empty-state {
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            border-radius: 24px;
-            padding: 0;
-            text-align: center;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            animation: slideUp 0.6s ease-out;
-            overflow: hidden;
-        }
-
-        .empty-state-hero {
-            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
-            padding: 60px 40px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .empty-state-hero::before {
-            content: '';
-            position: absolute;
-            width: 300px;
-            height: 300px;
-            background: radial-gradient(circle, rgba(139, 92, 246, 0.4) 0%, transparent 70%);
-            border-radius: 50%;
-            top: -100px;
-            right: -100px;
-            animation: breathe 4s ease-in-out infinite;
-        }
-
-        .empty-state-hero::after {
-            content: '';
-            position: absolute;
-            width: 200px;
-            height: 200px;
-            background: radial-gradient(circle, rgba(99, 102, 241, 0.3) 0%, transparent 70%);
-            border-radius: 50%;
-            bottom: -50px;
-            left: -50px;
-            animation: breathe 5s ease-in-out infinite reverse;
-        }
-
-        .empty-icon-container {
-            position: relative;
-            display: inline-block;
-            margin-bottom: 25px;
-        }
-
-        .empty-icon-ring {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 150px;
-            height: 150px;
-            border: 3px solid rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-            animation: breathe 3s ease-in-out infinite;
-        }
-
-        .empty-icon-ring-outer {
-            width: 180px;
-            height: 180px;
-            border: 2px dashed rgba(255, 255, 255, 0.15);
-            animation: rotate 20s linear infinite;
-        }
-
-        .empty-icon {
-            font-size: 80px;
-            position: relative;
-            z-index: 1;
-            filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.3));
-            animation: bounce 3s ease-in-out infinite;
-        }
-
-        .empty-state-hero h2 {
-            font-size: 32px;
-            font-weight: 800;
-            color: white;
-            margin-bottom: 10px;
-            position: relative;
-            z-index: 1;
-            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-        }
-
-        .empty-state-hero .tagline {
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 18px;
-            font-weight: 500;
-            position: relative;
-            z-index: 1;
-        }
-
-        .empty-state-content {
-            padding: 40px;
-        }
-
-        .time-display {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin-bottom: 40px;
-            flex-wrap: wrap;
-        }
-
-        .time-card {
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
-            border: 1px solid rgba(99, 102, 241, 0.2);
-            border-radius: 16px;
-            padding: 20px 30px;
-            min-width: 200px;
-            transition: all 0.3s ease;
-        }
-
-        .time-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.2);
-            border-color: rgba(99, 102, 241, 0.4);
-        }
-
-        .time-card-label {
-            font-size: 12px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #64748b;
-            margin-bottom: 8px;
-        }
-
-        .time-card-value {
-            font-size: 28px;
-            font-weight: 800;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .time-card-sub {
-            font-size: 14px;
-            color: #475569;
-            margin-top: 5px;
-            font-weight: 500;
-        }
-
-        .ready-status {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-            padding: 20px 35px;
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.1) 100%);
-            border: 2px solid rgba(16, 185, 129, 0.3);
-            border-radius: 16px;
-            margin-bottom: 40px;
-        }
-
-        .ready-dot {
-            width: 14px;
-            height: 14px;
-            background: var(--success);
-            border-radius: 50%;
-            animation: pulse 1.5s ease-in-out infinite;
-            box-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
-        }
-
-        .ready-text {
-            font-size: 18px;
-            font-weight: 700;
-            color: #065f46;
-            letter-spacing: 0.5px;
-        }
-
-        .tips-section {
-            background: rgba(248, 250, 252, 0.5);
-            border-radius: 16px;
-            padding: 30px;
-            margin-top: 20px;
-        }
-
-        .tips-header {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .tips-header h3 {
-            font-size: 16px;
-            font-weight: 700;
-            color: #475569;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .tips-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 20px;
-        }
-
-        .tip-card {
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-            border: 1px solid rgba(0, 0, 0, 0.05);
-            transition: all 0.3s ease;
-            text-align: left;
-        }
-
-        .tip-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-        }
-
-        .tip-icon {
-            font-size: 28px;
-            margin-bottom: 12px;
-        }
-
-        .tip-title {
-            font-size: 14px;
-            font-weight: 700;
-            color: #1e293b;
-            margin-bottom: 6px;
-        }
-
-        .tip-desc {
-            font-size: 13px;
-            color: #64748b;
-            line-height: 1.5;
-        }
-
-        .motivational-quote {
-            margin-top: 40px;
-            padding: 25px 40px;
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%);
-            border-left: 4px solid var(--primary);
-            border-radius: 0 12px 12px 0;
-        }
-
-        .quote-text {
-            font-size: 18px;
-            font-style: italic;
-            color: #475569;
-            line-height: 1.6;
-        }
-
-        .quote-author {
-            margin-top: 10px;
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--primary);
-        }
-
         .time-info {
             display: flex;
             gap: 15px;
@@ -761,58 +527,62 @@
             color: #475569;
         }
 
-        /* Card removal animation */
-        @keyframes cardSlideOut {
-            0% {
-                opacity: 1;
-                transform: translateX(0) scale(1);
-            }
-
-            100% {
-                opacity: 0;
-                transform: translateX(100px) scale(0.9);
-            }
+        /* Empty State */
+        .empty-state {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 0;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            animation: slideUp 0.6s ease-out;
+            overflow: hidden;
         }
 
-        .queue-card.removing {
-            animation: cardSlideOut 0.4s ease-out forwards;
-            pointer-events: none;
+        .empty-state-hero {
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+            padding: 60px 40px;
+            position: relative;
+            overflow: hidden;
         }
 
-        /* Card status change animation */
-        @keyframes cardPulse {
+        .empty-icon {
+            font-size: 80px;
+            margin-bottom: 25px;
+            animation: bounce 3s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
 
             0%,
+            20%,
+            50%,
+            80%,
             100% {
-                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+                transform: translateY(0);
             }
 
-            50% {
-                box-shadow: 0 10px 40px rgba(16, 185, 129, 0.4);
+            40% {
+                transform: translateY(-20px);
+            }
+
+            60% {
+                transform: translateY(-10px);
             }
         }
 
-        .queue-card.updating {
-            animation: cardPulse 0.6s ease-in-out;
+        .empty-state-hero h2 {
+            font-size: 32px;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 10px;
         }
 
-        /* Button loading state */
-        .btn.loading {
-            opacity: 0.7;
-            pointer-events: none;
-            position: relative;
-        }
-
-        .btn.loading::after {
-            content: '';
-            position: absolute;
-            width: 16px;
-            height: 16px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-top-color: white;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            right: 10px;
+        .empty-state-hero .tagline {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 18px;
+            font-weight: 500;
         }
 
         .loading {
@@ -856,74 +626,18 @@
                 font-size: 28px;
             }
 
-            .stats {
-                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-                gap: 12px;
-            }
-
-            .stat {
-                padding: 15px;
-            }
-
-            .stat-number {
-                font-size: 24px;
+            .barber-hub {
+                grid-template-columns: 1fr;
             }
 
             .queue-card {
                 padding: 20px;
             }
 
-            .customer-name {
-                font-size: 20px;
-            }
-
             .position-badge {
                 width: 40px;
                 height: 40px;
                 font-size: 16px;
-            }
-
-            .actions {
-                width: 100%;
-            }
-
-            .btn {
-                flex: 1;
-                min-width: 120px;
-                justify-content: center;
-            }
-
-            .empty-state-hero {
-                padding: 40px 20px;
-            }
-
-            .empty-state-hero h2 {
-                font-size: 24px;
-            }
-
-            .empty-icon {
-                font-size: 60px;
-            }
-
-            .empty-state-content {
-                padding: 25px;
-            }
-
-            .time-display {
-                gap: 15px;
-            }
-
-            .time-card {
-                min-width: 140px;
-                padding: 15px 20px;
-            }
-
-            .time-card-value {
-                font-size: 22px;
-            }
-
-            .tips-grid {
-                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -935,9 +649,16 @@
             <div class="loading-spinner"></div>
             <div class="loading-text">Loading dashboard...</div>
         </div>
+
         <div id="dashboard" style="display: none;">
             <div class="header">
-                <h1>🪒 Queue Dashboard</h1>
+                <div class="header-top">
+                    <h1>🪒 Queue Dashboard</h1>
+                    <button class="back-btn" id="backBtn" onclick="showHubView()">
+                        <span>←</span>
+                        <span>Back to Hub</span>
+                    </button>
+                </div>
                 <div class="stats">
                     <div class="stat">
                         <span class="stat-number" id="totalActive">0</span>
@@ -961,6 +682,7 @@
                 </button>
             </div>
 
+            <div id="hubView"></div>
             <div id="queueContainer"></div>
         </div>
     </div>
@@ -972,69 +694,17 @@
             startServiceUrl: 'https://n8n.srv1146840.hstgr.cloud/webhook/start-service',
             completeServiceUrl: 'https://n8n.srv1146840.hstgr.cloud/webhook/complete-service',
             noShowUrl: 'https://n8n.srv1146840.hstgr.cloud/webhook/no-show',
-            cancelUrl: 'https://n8n.srv1146840.hstgr.cloud/webhook/customer-cancel'
+            cancelUrl: 'https://n8n.srv1146840.hstgr.cloud/webhook/customer-cancel',
+            barbers: [
+                { id: 'john', name: 'John', avatar: '👨', color: '#6366f1' },
+                { id: 'mike', name: 'Mike', avatar: '👨‍🦱', color: '#8b5cf6' },
+                { id: 'sarah', name: 'Sarah', avatar: '👩', color: '#ec4899' },
+                { id: 'next_available', name: 'Next Available', avatar: '⚡', color: '#10b981' }
+            ]
         };
 
-        // Motivational quotes for barbers
-        const quotes = [
-            { text: "Every great haircut starts with an empty chair waiting for its next masterpiece.", author: "The Art of Barbering" },
-            { text: "In the quiet moments, we prepare for greatness.", author: "Barber's Wisdom" },
-            { text: "A clean shop and a clear mind are ready for anything.", author: "Old School Barber Proverb" },
-            { text: "The best barbers don't wait for customers—they're always ready for them.", author: "Modern Barbering" },
-            { text: "Excellence is not a destination but a continuous journey.", author: "Master Barber's Creed" }
-        ];
-
-        // Get current time formatted
-        function getCurrentTime() {
-            const now = new Date();
-            return now.toLocaleTimeString('en-US', {
-                hour: 'numeric',
-                minute: '2-digit',
-                hour12: true
-            });
-        }
-
-        // Get current date formatted
-        function getCurrentDate() {
-            const now = new Date();
-            return now.toLocaleDateString('en-US', {
-                weekday: 'long',
-                month: 'long',
-                day: 'numeric',
-                year: 'numeric'
-            });
-        }
-
-        // Get day part greeting
-        function getGreeting() {
-            const hour = new Date().getHours();
-            if (hour < 12) return "Good Morning";
-            if (hour < 17) return "Good Afternoon";
-            return "Good Evening";
-        }
-
-        // Get random quote
-        function getRandomQuote() {
-            return quotes[Math.floor(Math.random() * quotes.length)];
-        }
-
-        // Update time display
-        function updateTimeDisplay() {
-            const timeElement = document.getElementById('currentTime');
-            const dateElement = document.getElementById('currentDate');
-            if (timeElement) timeElement.textContent = getCurrentTime();
-            if (dateElement) timeElement.textContent = getCurrentTime();
-        }
-
-        // Helper function to show empty queue state
-        function showEmptyState() {
-            renderQueue([]);
-            document.getElementById('totalActive').textContent = 0;
-            document.getElementById('totalWaiting').textContent = 0;
-            document.getElementById('totalInService').textContent = 0;
-            document.getElementById('loading').style.display = 'none';
-            document.getElementById('dashboard').style.display = 'block';
-        }
+        let currentView = 'hub'; // 'hub' or barber ID
+        let allCustomers = [];
 
         // Load dashboard data
         async function loadDashboard() {
@@ -1044,72 +714,62 @@
 
                 const response = await fetch(CONFIG.dashboardUrl);
 
-                // Handle non-OK responses gracefully (treat as empty queue)
                 if (!response.ok) {
                     console.warn(`API returned ${response.status}, treating as empty queue`);
+                    allCustomers = [];
                     showEmptyState();
                     return;
                 }
 
-                // Get raw text first to handle empty responses
                 const rawText = await response.text();
 
-                // If response is empty or whitespace, treat as empty queue
                 if (!rawText || rawText.trim() === '' || rawText.trim() === '{}') {
                     console.log('Empty response from API, showing idle state');
+                    allCustomers = [];
                     showEmptyState();
                     return;
                 }
 
-                // Try to parse JSON
                 let data;
                 try {
                     data = JSON.parse(rawText);
                 } catch (parseError) {
                     console.warn('Failed to parse JSON, treating as empty queue:', parseError);
+                    allCustomers = [];
                     showEmptyState();
                     return;
                 }
 
-                // Handle different response formats
                 let customers = [];
                 if (Array.isArray(data)) {
                     customers = data;
                 } else if (data && typeof data === 'object') {
-                    // Check if it's an empty object or has no meaningful data
                     if (Object.keys(data).length === 0) {
+                        allCustomers = [];
                         showEmptyState();
                         return;
                     }
                     customers = [data];
-                } else {
-                    customers = [];
                 }
 
-                console.log('Received customers:', customers);
-
-                // Filter active customers
                 const activeStatuses = ['WAITING', 'NOTIFIED', 'IN_SERVICE'];
-                const activeCustomers = customers.filter(customer => {
+                allCustomers = customers.filter(customer => {
                     if (!customer) return false;
                     const status = String(customer.status || '').toUpperCase().trim();
                     return activeStatuses.includes(status);
                 });
 
-                // Sort by checkin time
-                activeCustomers.sort((a, b) =>
+                allCustomers.sort((a, b) =>
                     new Date(a.checkin_time) - new Date(b.checkin_time)
                 );
 
-                // Update stats
-                document.getElementById('totalActive').textContent = activeCustomers.length;
-                document.getElementById('totalWaiting').textContent =
-                    activeCustomers.filter(c => c.status === 'WAITING').length;
-                document.getElementById('totalInService').textContent =
-                    activeCustomers.filter(c => c.status === 'IN_SERVICE').length;
+                updateStats();
 
-                // Render queue
-                renderQueue(activeCustomers);
+                if (currentView === 'hub') {
+                    renderBarberHub();
+                } else {
+                    renderBarberQueue(currentView);
+                }
 
                 document.getElementById('loading').style.display = 'none';
                 document.getElementById('dashboard').style.display = 'block';
@@ -1121,85 +781,129 @@
             }
         }
 
-        // Render queue cards
-        function renderQueue(customers) {
-            const container = document.getElementById('queueContainer');
-            const quote = getRandomQuote();
+        // Update overall stats
+        function updateStats() {
+            document.getElementById('totalActive').textContent = allCustomers.length;
+            document.getElementById('totalWaiting').textContent =
+                allCustomers.filter(c => c.status === 'WAITING').length;
+            document.getElementById('totalInService').textContent =
+                allCustomers.filter(c => c.status === 'IN_SERVICE').length;
+        }
 
-            if (!customers || customers.length === 0) {
-                container.innerHTML = `
+        // Show empty state
+        function showEmptyState() {
+            allCustomers = [];
+            updateStats();
+            if (currentView === 'hub') {
+                renderBarberHub();
+            } else {
+                renderBarberQueue(currentView);
+            }
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'block';
+        }
+
+        // Calculate wait time for barber
+        function calculateWaitTime(barberId) {
+            const barberQueue = allCustomers.filter(c => c.barber_id === barberId);
+            if (barberQueue.length === 0) return 0;
+            return barberQueue.reduce((sum, c) => sum + (parseInt(c.service_duration) || 40), 0);
+        }
+
+        // Render barber hub view
+        function renderBarberHub() {
+            currentView = 'hub';
+            document.getElementById('backBtn').style.display = 'none';
+            document.getElementById('queueContainer').innerHTML = '';
+
+            const hubView = document.getElementById('hubView');
+
+            if (allCustomers.length === 0) {
+                hubView.innerHTML = `
                     <div class="empty-state">
                         <div class="empty-state-hero">
-                            <div class="empty-icon-container">
-                                <div class="empty-icon-ring"></div>
-                                <div class="empty-icon-ring empty-icon-ring-outer"></div>
-                                <div class="empty-icon">✂️</div>
-                            </div>
-                            <h2>${getGreeting()}!</h2>
-                            <p class="tagline">Your chair is ready for the next client</p>
+                            <div class="empty-icon">✂️</div>
+                            <h2>All Clear!</h2>
+                            <p class="tagline">No customers in queue</p>
                         </div>
-                        
-                        <div class="empty-state-content">
-                            <div class="time-display">
-                                <div class="time-card">
-                                    <div class="time-card-label">Current Time</div>
-                                    <div class="time-card-value" id="currentTime">${getCurrentTime()}</div>
-                                </div>
-                                <div class="time-card">
-                                    <div class="time-card-label">Today's Date</div>
-                                    <div class="time-card-value" id="currentDate">${new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}</div>
-                                    <div class="time-card-sub">${new Date().toLocaleDateString('en-US', { weekday: 'long' })}</div>
-                                </div>
+                    </div>
+                `;
+                return;
+            }
+
+            const barbersHTML = CONFIG.barbers.map(barber => {
+                const barberQueue = allCustomers.filter(c => c.barber_id === barber.id);
+                const waitTime = calculateWaitTime(barber.id);
+                const waiting = barberQueue.filter(c => c.status === 'WAITING').length;
+                const inService = barberQueue.filter(c => c.status === 'IN_SERVICE').length;
+
+                const waitDisplay = waitTime === 0 ? '0 min' :
+                    waitTime < 60 ? `${waitTime} min` : `${Math.ceil(waitTime / 60)} hr`;
+
+                return `
+                    <div class="barber-hub-card" onclick="showBarberQueue('${barber.id}')">
+                        <div class="barber-avatar-large" style="background: linear-gradient(135deg, ${barber.color}, ${barber.color}dd);">
+                            ${barber.avatar}
+                        </div>
+                        <div class="barber-hub-name">${barber.name}</div>
+                        <div class="wait-time-display">
+                            <div class="wait-time-label">Estimated Wait</div>
+                            <div class="wait-time-value">${waitDisplay}</div>
+                        </div>
+                        <div class="barber-hub-stats">
+                            <div class="barber-stat-mini">
+                                <span class="barber-stat-value">${barberQueue.length}</span>
+                                <div class="barber-stat-label">Total</div>
                             </div>
-                            
-                            <div class="ready-status">
-                                <div class="ready-dot"></div>
-                                <span class="ready-text">Ready for Walk-ins & Appointments</span>
+                            <div class="barber-stat-mini">
+                                <span class="barber-stat-value">${waiting}</span>
+                                <div class="barber-stat-label">Waiting</div>
                             </div>
-                            
-                            <div class="tips-section">
-                                <div class="tips-header">
-                                    <span>💡</span>
-                                    <h3>Quick Actions</h3>
-                                </div>
-                                <div class="tips-grid">
-                                    <div class="tip-card">
-                                        <div class="tip-icon">📱</div>
-                                        <div class="tip-title">Share Your Link</div>
-                                        <div class="tip-desc">Send your check-in link to waiting customers outside</div>
-                                    </div>
-                                    <div class="tip-card">
-                                        <div class="tip-icon">🧹</div>
-                                        <div class="tip-title">Station Prep</div>
-                                        <div class="tip-desc">Great time to sanitize tools and organize your station</div>
-                                    </div>
-                                    <div class="tip-card">
-                                        <div class="tip-icon">📸</div>
-                                        <div class="tip-title">Portfolio Update</div>
-                                        <div class="tip-desc">Review and post your best recent work to social media</div>
-                                    </div>
-                                    <div class="tip-card">
-                                        <div class="tip-icon">☕</div>
-                                        <div class="tip-title">Take a Break</div>
-                                        <div class="tip-desc">Stay refreshed—grab a drink before the rush begins</div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="motivational-quote">
-                                <div class="quote-text">"${quote.text}"</div>
-                                <div class="quote-author">— ${quote.author}</div>
+                            <div class="barber-stat-mini">
+                                <span class="barber-stat-value">${inService}</span>
+                                <div class="barber-stat-label">In Service</div>
                             </div>
                         </div>
                     </div>
                 `;
+            }).join('');
 
-                // Start updating time every minute
-                setInterval(updateTimeDisplay, 60000);
+            hubView.innerHTML = `<div class="barber-hub">${barbersHTML}</div>`;
+        }
+
+        // Show specific barber queue
+        function showBarberQueue(barberId) {
+            currentView = barberId;
+            document.getElementById('backBtn').style.display = 'flex';
+            document.getElementById('hubView').innerHTML = '';
+            renderBarberQueue(barberId);
+        }
+
+        // Show hub view
+        function showHubView() {
+            renderBarberHub();
+        }
+
+        // Render barber's queue
+        function renderBarberQueue(barberId) {
+            const container = document.getElementById('queueContainer');
+            const barberQueue = allCustomers.filter(c => c.barber_id === barberId);
+            const barber = CONFIG.barbers.find(b => b.id === barberId);
+
+            if (barberQueue.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-hero">
+                            <div class="empty-icon">${barber ? barber.avatar : '✂️'}</div>
+                            <h2>${barber ? barber.name : 'This Barber'} is Ready!</h2>
+                            <p class="tagline">No customers in queue</p>
+                        </div>
+                    </div>
+                `;
                 return;
             }
 
-            container.innerHTML = customers.map((customer, index) => {
+            container.innerHTML = barberQueue.map((customer, index) => {
                 if (!customer || !customer.customer_id || !customer.status) {
                     return '';
                 }
@@ -1211,19 +915,17 @@
                 return `
                     <div class="queue-card" data-customer-id="${customer.customer_id}">
                         <div class="position-badge">#${index + 1}</div>
-                        <div class="queue-header">
-                            <div class="customer-info">
-                                <div class="customer-name">${customer.name}</div>
-                                <div class="customer-details">
-                                    <span class="detail-item">📱 ${customer.phone}</span>
-                                    <span class="detail-item">✂️ ${customer.service}</span>
-                                    <span class="status-badge ${statusClass}">${customer.status}</span>
-                                </div>
-                                <div class="time-info">
-                                    <div class="time-item">⏱️ Duration: ${customer.service_duration}min</div>
-                                    <div class="time-item">⏰ Waiting: ${waitTime}min</div>
-                                    ${customer.notified_time ? '<div class="time-item">🔔 Notified</div>' : ''}
-                                </div>
+                        <div class="customer-info">
+                            <div class="customer-name">${customer.name}</div>
+                            <div class="customer-details">
+                                <span class="detail-item">📱 ${customer.phone}</span>
+                                <span class="detail-item">✂️ ${customer.service}</span>
+                                <span class="status-badge ${statusClass}">${customer.status}</span>
+                            </div>
+                            <div class="time-info">
+                                <div class="time-item">⏱️ Duration: ${customer.service_duration}min</div>
+                                <div class="time-item">⏰ Waiting: ${waitTime}min</div>
+                                ${customer.notified_time ? '<div class="time-item">🔔 Notified</div>' : ''}
                             </div>
                         </div>
                         <div class="actions">
@@ -1271,12 +973,10 @@
             toast.textContent = message;
             document.body.appendChild(toast);
 
-            // Animate in
             requestAnimationFrame(() => {
                 toast.style.transform = 'translateX(0)';
             });
 
-            // Animate out and remove
             setTimeout(() => {
                 toast.style.transform = 'translateX(120%)';
                 setTimeout(() => toast.remove(), 300);
@@ -1284,7 +984,7 @@
         }
 
         // Update customer status - OPTIMISTIC UI
-        async function updateStatus(customerId, action, buttonElement) {
+        async function updateStatus(customerId, action) {
             const endpoints = {
                 'start': CONFIG.startServiceUrl,
                 'complete': CONFIG.completeServiceUrl,
@@ -1299,75 +999,52 @@
                 'noshow': 'No Show'
             };
 
-            // Find the card element
             const card = document.querySelector(`[data-customer-id="${customerId}"]`);
             if (!card) {
                 console.error('Card not found for customer:', customerId);
                 return;
             }
 
-            // Find the clicked button and add loading state
             const buttons = card.querySelectorAll('.btn');
-            buttons.forEach(btn => btn.classList.add('loading'));
+            buttons.forEach(btn => btn.disabled = true);
 
-            // OPTIMISTIC UI: Immediately animate the card based on action
+            // OPTIMISTIC UI
             if (action === 'complete' || action === 'cancel' || action === 'noshow') {
-                // These actions remove the customer - animate out immediately
-                card.classList.add('removing');
+                card.style.transition = 'all 0.4s ease-out';
+                card.style.opacity = '0';
+                card.style.transform = 'translateX(100px) scale(0.9)';
 
-                // Update stats immediately
-                const activeEl = document.getElementById('totalActive');
-                const waitingEl = document.getElementById('totalWaiting');
-                const inServiceEl = document.getElementById('totalInService');
-
-                const currentActive = parseInt(activeEl.textContent) || 0;
-                activeEl.textContent = Math.max(0, currentActive - 1);
-
-                // Adjust waiting/in-service based on current card status
-                const statusBadge = card.querySelector('.status-badge');
-                if (statusBadge) {
-                    const status = statusBadge.textContent.trim().toUpperCase();
-                    if (status === 'WAITING' || status === 'NOTIFIED') {
-                        const currentWaiting = parseInt(waitingEl.textContent) || 0;
-                        waitingEl.textContent = Math.max(0, currentWaiting - 1);
-                    } else if (status === 'IN_SERVICE') {
-                        const currentInService = parseInt(inServiceEl.textContent) || 0;
-                        inServiceEl.textContent = Math.max(0, currentInService - 1);
-                    }
+                // Update local data
+                const customerIndex = allCustomers.findIndex(c => c.customer_id === customerId);
+                if (customerIndex !== -1) {
+                    allCustomers.splice(customerIndex, 1);
                 }
+                updateStats();
+
             } else if (action === 'start') {
-                // Start service - update the card status visually
-                card.classList.add('updating');
                 const statusBadge = card.querySelector('.status-badge');
                 if (statusBadge) {
                     statusBadge.className = 'status-badge status-in-service';
                     statusBadge.textContent = 'IN_SERVICE';
                 }
-                // Hide the start button
                 const startBtn = card.querySelector('.btn-start');
                 if (startBtn) startBtn.style.display = 'none';
 
-                // Update stats
-                const waitingEl = document.getElementById('totalWaiting');
-                const inServiceEl = document.getElementById('totalInService');
-                const currentWaiting = parseInt(waitingEl.textContent) || 0;
-                const currentInService = parseInt(inServiceEl.textContent) || 0;
-                waitingEl.textContent = Math.max(0, currentWaiting - 1);
-                inServiceEl.textContent = currentInService + 1;
+                // Update local data
+                const customer = allCustomers.find(c => c.customer_id === customerId);
+                if (customer) {
+                    customer.status = 'IN_SERVICE';
+                }
+                updateStats();
             }
 
-            // Show immediate feedback
             showToast(`✅ ${actionNames[action]} - Processing...`);
 
-            // Send request to server in background
+            // Send to server
             try {
-                console.log(`Sending ${action} request for customer ${customerId}`);
-
                 const response = await fetch(endpoints[action], {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         customerId: customerId,
                         customer_id: customerId,
@@ -1375,32 +1052,26 @@
                     })
                 });
 
-                console.log('Response status:', response.status);
-
                 if (response.ok) {
-                    // Success! Remove card from DOM after animation completes
                     if (action === 'complete' || action === 'cancel' || action === 'noshow') {
                         setTimeout(() => {
                             card.remove();
-                            // Check if queue is now empty
-                            const container = document.getElementById('queueContainer');
-                            if (!container.querySelector('.queue-card')) {
-                                showEmptyState();
+                            if (currentView !== 'hub') {
+                                const barberQueue = allCustomers.filter(c => c.barber_id === currentView);
+                                if (barberQueue.length === 0) {
+                                    renderBarberQueue(currentView);
+                                }
                             }
                         }, 400);
                     } else {
-                        // For start service, remove loading state
-                        buttons.forEach(btn => btn.classList.remove('loading'));
-                        setTimeout(() => card.classList.remove('updating'), 600);
+                        buttons.forEach(btn => btn.disabled = false);
                     }
                 } else {
-                    // Server error - revert UI and show error
                     console.error('Server error:', response.status);
                     showToast('❌ Server error - refreshing...', true);
                     setTimeout(() => loadDashboard(), 1000);
                 }
             } catch (error) {
-                // Network error - revert UI
                 console.error('Network error:', error);
                 showToast('❌ Connection error - refreshing...', true);
                 setTimeout(() => loadDashboard(), 1000);
@@ -1412,65 +1083,7 @@
             loadDashboard();
         }, 30000);
 
-        // Helper to add activity to feed
-        function addActivity(user, action, type = 'info') {
-            const feed = document.getElementById('activityFeed');
-            if (!feed) return;
-
-            const icons = {
-                'start': '▶️',
-                'complete': '✅',
-                'cancel': '🚫',
-                'noshow': '❌',
-                'info': 'ℹ️'
-            };
-
-            const colors = {
-                'start': 'var(--success)',
-                'complete': 'var(--info)',
-                'cancel': 'var(--warning)',
-                'noshow': 'var(--danger)',
-                'info': 'var(--primary)'
-            };
-
-            const item = document.createElement('div');
-            item.className = 'activity-item';
-            item.style.borderLeftColor = colors[type] || colors.info;
-            item.innerHTML = `
-                <div class="activity-icon">${icons[type] || icons.info}</div>
-                <div class="activity-details">
-                    <span class="activity-user">${user}</span>
-                    <span class="activity-action">${action}</span>
-                    <span class="activity-time">${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                </div>
-            `;
-
-            feed.prepend(item);
-            if (feed.children.length > 5) {
-                feed.lastElementChild.remove();
-            }
-        }
-
-        // Modified updateStatus to include activity feed
-        const originalUpdateStatus = updateStatus;
-        updateStatus = async function (customerId, action, buttonElement) {
-            const card = document.querySelector(`[data-customer-id="${customerId}"]`);
-            const name = card ? card.querySelector('.customer-name').textContent : 'Unknown Customer';
-
-            const actionLabels = {
-                'start': 'started service',
-                'complete': 'completed service',
-                'cancel': 'cancelled session',
-                'noshow': 'marked as no-show'
-            };
-
-            await originalUpdateStatus(customerId, action, buttonElement);
-
-            // If it would have succeeded (optimistic or actual), add to feed
-            addActivity(name, actionLabels[action], action);
-        };
-
-        // Load on page load
+        // Initialize
         loadDashboard();
     </script>
 </body>
