@@ -29,11 +29,15 @@
             background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 50%, #1e293b 100%);
             min-height: 100vh;
             display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: center;
-            padding: 20px;
+            justify-content: flex-start;
+            /* Better for natural scrolling */
+            padding: 40px 20px;
             position: relative;
-            overflow: hidden;
+            overflow-x: hidden;
+            overflow-y: auto;
+            /* Ensure vertical scrolling is enabled */
         }
 
         /* Animated background */
@@ -296,6 +300,30 @@
             padding: 4px;
             border-radius: 12px;
             background: rgba(241, 245, 249, 0.5);
+            -webkit-overflow-scrolling: touch;
+            /* Smooth scrolling on iOS */
+        }
+
+        /* Responsive adjustments for scrolling */
+        @media (max-width: 600px) {
+            .service-scroll {
+                max-height: none;
+                /* Disable internal scroll on small mobiles to avoid scroll trap */
+                overflow-y: visible;
+                background: transparent;
+                padding: 0;
+            }
+
+            .service-label {
+                padding: 18px 16px;
+                /* Larger tap targets */
+                margin-bottom: 12px;
+            }
+
+            .card {
+                padding: 30px 20px;
+                margin-top: 0;
+            }
         }
 
         /* Custom scrollbar */
@@ -683,21 +711,22 @@
          * Normalize phone number - handles all autofill formats
          * Strips country code (+1, 1) and formats to 10-digit US number
          */
-       function normalizePhoneNumber(value) {
-    let digits = value.replace(/\D/g, '');
-    
-    // Handle country code - if 11 digits starting with 1, strip it
-    if (digits.length === 11 && digits.startsWith('1')) {
-        digits = digits.substring(1);
-    }
-    
-    // Safety: if still >10 digits, take the LAST 10
-    if (digits.length > 10) {
-        digits = digits.slice(-10);
-    }
-    
-    return digits;
-}
+        function normalizePhoneNumber(value) {
+            // Remove all non-digit characters
+            let digits = value.replace(/\D/g, '');
+
+            // Handle country code - if 11 digits and starts with 1, remove the 1
+            if (digits.length === 11 && digits.startsWith('1')) {
+                digits = digits.substring(1);
+            }
+
+            // If still more than 10 digits, take the last 10 (most likely the actual number)
+            if (digits.length > 10) {
+                digits = digits.slice(-10);
+            }
+
+            return digits;
+        }
 
         /**
          * Format phone number for display
