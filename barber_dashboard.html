@@ -925,7 +925,108 @@
             .tips-grid {
                 grid-template-columns: 1fr;
             }
-        }
+
+            @media (min-width: 1024px) {
+                .container {
+                    display: grid;
+                    grid-template-columns: 1fr 350px;
+                    gap: 30px;
+                    align-items: start;
+                }
+
+                .header,
+                .controls,
+                #queueContainer {
+                    grid-column: 1;
+                }
+
+                .sidebar {
+                    grid-column: 2;
+                    grid-row: 1 / 4;
+                    position: sticky;
+                    top: 20px;
+                    display: block !important;
+                    background: var(--card-bg);
+                    backdrop-filter: blur(10px);
+                    border-radius: 24px;
+                    padding: 30px;
+                    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+                    border: 1px solid rgba(255, 255, 255, 0.1);
+                    animation: slideUp 0.6s ease-out 0.2s backwards;
+                }
+            }
+
+            .sidebar {
+                display: none;
+            }
+
+            .sidebar-section {
+                margin-bottom: 30px;
+            }
+
+            .sidebar-title {
+                font-size: 18px;
+                font-weight: 800;
+                color: #1e293b;
+                margin-bottom: 20px;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+
+            .activity-feed {
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .activity-item {
+                display: flex;
+                gap: 12px;
+                padding: 12px;
+                background: rgba(99, 102, 241, 0.05);
+                border-radius: 12px;
+                font-size: 13px;
+                border-left: 3px solid var(--primary);
+                animation: fadeIn 0.3s ease-out;
+            }
+
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                    transform: translateX(-10px);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+            }
+
+            .activity-icon {
+                font-size: 16px;
+            }
+
+            .activity-details {
+                display: flex;
+                flex-direction: column;
+                gap: 2px;
+            }
+
+            .activity-user {
+                font-weight: 700;
+                color: #1e293b;
+            }
+
+            .activity-action {
+                color: #64748b;
+            }
+
+            .activity-time {
+                font-size: 11px;
+                color: #94a3b8;
+                margin-top: 4px;
+            }
     </style>
 </head>
 
@@ -962,6 +1063,44 @@
             </div>
 
             <div id="queueContainer"></div>
+
+            <!-- Desktop Sidebar -->
+            <aside class="sidebar">
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title"><span>📊</span> Statistics Overview</h3>
+                    <div class="stat-card"
+                        style="margin-bottom: 15px; padding: 15px; background: linear-gradient(135deg, rgba(99, 102, 241, 0.05), rgba(139, 92, 246, 0.05)); border-radius: 12px; border: 1px solid rgba(99, 102, 241, 0.1);">
+                        <div
+                            style="font-size: 12px; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 5px;">
+                            Avg Wait Time</div>
+                        <div style="font-size: 24px; font-weight: 800; color: var(--primary);">~12 min</div>
+                    </div>
+                </div>
+
+                <div class="sidebar-section">
+                    <h3 class="sidebar-title"><span>🔔</span> Recent Activity</h3>
+                    <div id="activityFeed" class="activity-feed">
+                        <div class="activity-item" style="border-left-color: var(--success);">
+                            <div class="activity-icon">✅</div>
+                            <div class="activity-details">
+                                <span class="activity-user">System</span>
+                                <span class="activity-action">Dashboard synchronized</span>
+                                <span class="activity-time">Just now</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sidebar-section" style="margin-top: 40px;">
+                    <div class="tips-header" style="justify-content: flex-start; margin-bottom: 15px;">
+                        <span>💡</span>
+                        <h3 style="font-size: 14px;">Quick Tip</h3>
+                    </div>
+                    <p style="font-size: 13px; color: #64748b; line-height: 1.6; font-style: italic;">
+                        "Keep your station clean between clients to maintain a premium atmosphere."
+                    </p>
+                </div>
+            </aside>
         </div>
     </div>
 
@@ -1411,6 +1550,64 @@
         setInterval(() => {
             loadDashboard();
         }, 30000);
+
+        // Helper to add activity to feed
+        function addActivity(user, action, type = 'info') {
+            const feed = document.getElementById('activityFeed');
+            if (!feed) return;
+
+            const icons = {
+                'start': '▶️',
+                'complete': '✅',
+                'cancel': '🚫',
+                'noshow': '❌',
+                'info': 'ℹ️'
+            };
+
+            const colors = {
+                'start': 'var(--success)',
+                'complete': 'var(--info)',
+                'cancel': 'var(--warning)',
+                'noshow': 'var(--danger)',
+                'info': 'var(--primary)'
+            };
+
+            const item = document.createElement('div');
+            item.className = 'activity-item';
+            item.style.borderLeftColor = colors[type] || colors.info;
+            item.innerHTML = `
+                <div class="activity-icon">${icons[type] || icons.info}</div>
+                <div class="activity-details">
+                    <span class="activity-user">${user}</span>
+                    <span class="activity-action">${action}</span>
+                    <span class="activity-time">${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                </div>
+            `;
+
+            feed.prepend(item);
+            if (feed.children.length > 5) {
+                feed.lastElementChild.remove();
+            }
+        }
+
+        // Modified updateStatus to include activity feed
+        const originalUpdateStatus = updateStatus;
+        updateStatus = async function (customerId, action, buttonElement) {
+            const card = document.querySelector(`[data-customer-id="${customerId}"]`);
+            const name = card ? card.querySelector('.customer-name').textContent : 'Unknown Customer';
+
+            const actionLabels = {
+                'start': 'started service',
+                'complete': 'completed service',
+                'cancel': 'cancelled session',
+                'noshow': 'marked as no-show'
+            };
+
+            await originalUpdateStatus(customerId, action, buttonElement);
+
+            // If it would have succeeded (optimistic or actual), add to feed
+            addActivity(name, actionLabels[action], action);
+        };
 
         // Load on page load
         loadDashboard();
