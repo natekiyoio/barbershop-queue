@@ -45,7 +45,6 @@
             -webkit-overflow-scrolling: touch;
         }
 
-        /* Animated background */
         body::before {
             content: '';
             position: fixed;
@@ -96,19 +95,15 @@
             }
         }
 
-        @keyframes shake {
+        @keyframes pulse {
 
             0%,
             100% {
-                transform: translateX(0);
+                opacity: 1;
             }
 
-            25% {
-                transform: translateX(-10px);
-            }
-
-            75% {
-                transform: translateX(10px);
+            50% {
+                opacity: 0.5;
             }
         }
 
@@ -189,112 +184,165 @@
             box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
         }
 
-        input::placeholder {
-            color: #94a3b8;
-        }
-
-        select {
-            cursor: pointer;
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236366f1'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 12px center;
-            background-size: 20px;
-            padding-right: 40px;
-        }
-
-        .btn {
-            width: 100%;
-            padding: 16px;
-            border: none;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+        .input-group {
             position: relative;
-            overflow: hidden;
         }
 
-        .btn::before {
-            content: '';
+        .input-icon {
             position: absolute;
+            left: 16px;
             top: 50%;
-            left: 50%;
+            transform: translateY(-50%);
+            font-size: 18px;
+            pointer-events: none;
+        }
+
+        .input-group input {
+            padding-left: 45px;
+        }
+
+        .phone-input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .country-code {
+            position: absolute;
+            left: 45px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 15px;
+            font-weight: 600;
+            color: #1e293b;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .phone-input-wrapper input {
+            padding-left: 80px;
+        }
+
+        /* Barber Selection Cards */
+        .barber-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .barber-option {
+            position: relative;
+        }
+
+        .barber-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
             width: 0;
             height: 0;
+        }
+
+        .barber-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 16px 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+            text-align: center;
+        }
+
+        .barber-avatar {
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
-        }
-
-        .btn:active::before {
-            width: 400px;
-            height: 400px;
-        }
-
-        .btn-primary {
             background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             color: white;
-            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
-        }
-
-        .btn-primary:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 30px rgba(99, 102, 241, 0.5);
-        }
-
-        .btn-primary:active:not(:disabled) {
-            transform: translateY(0);
-        }
-
-        .btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .success-message {
-            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
-            border: 2px solid #10b981;
-            color: #065f46;
-            padding: 20px;
-            border-radius: 12px;
-            text-align: center;
-            margin-bottom: 20px;
-            display: none;
-            animation: slideUp 0.5s ease-out;
-        }
-
-        .success-message h3 {
-            font-size: 20px;
-            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
             font-weight: 700;
+            margin-bottom: 8px;
+            transition: all 0.3s ease;
         }
 
-        .success-message p {
-            font-size: 14px;
-            line-height: 1.6;
-        }
-
-        .error-message {
-            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
-            border: 2px solid #ef4444;
-            color: #991b1b;
-            padding: 16px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            display: none;
-            animation: slideUp 0.5s ease-out, shake 0.5s ease-out;
-        }
-
-        .error-message p {
-            font-size: 14px;
+        .barber-name {
             font-weight: 600;
+            color: #1e293b;
+            font-size: 14px;
+            margin-bottom: 4px;
         }
 
+        .barber-wait {
+            font-size: 12px;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            justify-content: center;
+        }
+
+        .wait-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .wait-low {
+            background: #10b981;
+        }
+
+        .wait-medium {
+            background: #f59e0b;
+        }
+
+        .wait-high {
+            background: #ef4444;
+        }
+
+        .barber-option input[type="radio"]:checked+.barber-card {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .barber-option input[type="radio"]:checked+.barber-card .barber-avatar {
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.5);
+            transform: scale(1.05);
+        }
+
+        .barber-option input[type="radio"]:checked+.barber-card .barber-name {
+            color: var(--primary);
+        }
+
+        .barber-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .loading-spinner-small {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border: 2px solid #e2e8f0;
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Service Selection */
         .service-container {
             margin-bottom: 25px;
         }
@@ -306,69 +354,6 @@
             border-radius: 12px;
             background: rgba(241, 245, 249, 0.5);
             -webkit-overflow-scrolling: touch;
-            /* Smooth scrolling on iOS */
-        }
-
-        /* Consolidated Mobile Styles */
-        @media (max-width: 600px) {
-            body {
-                display: block;
-                /* Force block layout to avoid scroll bugs */
-                padding: 20px 12px 60px 12px;
-                overflow-y: auto;
-            }
-
-            .container {
-                margin: 0 auto;
-            }
-
-            .card {
-                padding: 24px 16px;
-                border-radius: 20px;
-                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            }
-
-            .header h1 {
-                font-size: 26px;
-            }
-
-            .service-scroll {
-                max-height: 400px;
-                /* Contained scroll to prevent overlap */
-                overflow-y: auto !important;
-                background: rgba(241, 245, 249, 0.4);
-                padding: 4px;
-                border: 1px solid #e2e8f0;
-            }
-
-            .service-label {
-                padding: 16px 12px;
-                margin-bottom: 10px;
-            }
-
-            .btn {
-                margin-top: 10px;
-                /* Ensure space after the service list */
-            }
-        }
-
-        /* Custom scrollbar */
-        .service-scroll::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .service-scroll::-webkit-scrollbar-track {
-            background: rgba(226, 232, 240, 0.5);
-            border-radius: 10px;
-        }
-
-        .service-scroll::-webkit-scrollbar-thumb {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            border-radius: 10px;
-        }
-
-        .service-scroll::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--secondary) 100%);
         }
 
         .service-option {
@@ -437,47 +422,54 @@
             transform: translateX(4px);
         }
 
-        .input-group {
+        .btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
             position: relative;
+            overflow: hidden;
         }
 
-        .input-icon {
-            position: absolute;
-            left: 16px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 18px;
-            pointer-events: none;
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
         }
 
-        .input-group input {
-            padding-left: 45px;
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(99, 102, 241, 0.5);
         }
 
-        /* Phone input with country code */
-        .phone-input-wrapper {
-            position: relative;
-            display: flex;
-            align-items: center;
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
         }
 
-        .country-code {
-            position: absolute;
-            left: 45px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 15px;
+        .error-message {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            border: 2px solid #ef4444;
+            color: #991b1b;
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: none;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        .error-message p {
+            font-size: 14px;
             font-weight: 600;
-            color: #1e293b;
-            pointer-events: none;
-            z-index: 1;
         }
 
-        .phone-input-wrapper input {
-            padding-left: 80px;
-        }
-
-        /* Fullscreen Success Overlay */
+        /* Success Overlay */
         #successOverlay {
             position: fixed;
             top: 0;
@@ -541,35 +533,6 @@
             }
         }
 
-        .success-icon-wrap::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            border-radius: 50%;
-            border: 4px solid #10b981;
-            animation: pulse-ring 2s infinite;
-        }
-
-        @keyframes pulse-ring {
-            0% {
-                transform: scale(0.85);
-                opacity: 0.8;
-            }
-
-            100% {
-                transform: scale(1.3);
-                opacity: 0;
-            }
-        }
-
-        .success-content {
-            max-width: 400px;
-            animation: slideUp 0.6s ease-out 0.2s both;
-        }
-
         .success-content h2 {
             font-size: 38px;
             font-weight: 800;
@@ -593,7 +556,6 @@
             gap: 15px;
             width: 100%;
             max-width: 320px;
-            animation: slideUp 0.6s ease-out 0.4s both;
         }
 
         .btn-secondary {
@@ -607,6 +569,31 @@
             background: rgba(255, 255, 255, 0.15);
             transform: translateY(-2px);
         }
+
+        @media (max-width: 600px) {
+            body {
+                display: block;
+                padding: 20px 12px 60px 12px;
+                overflow-y: auto;
+            }
+
+            .card {
+                padding: 24px 16px;
+                border-radius: 20px;
+            }
+
+            .header h1 {
+                font-size: 26px;
+            }
+
+            .barber-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .service-scroll {
+                max-height: 400px;
+            }
+        }
     </style>
 </head>
 
@@ -615,15 +602,27 @@
         <div class="card">
             <div class="header">
                 <h1>✂️ Walk-In Check-In</h1>
-                <p>Join the queue and we'll notify you when it's your turn</p>
+                <p>Select your barber and service to join the queue</p>
             </div>
-
 
             <div id="errorMessage" class="error-message">
                 <p id="errorText"></p>
             </div>
 
             <form id="checkinForm">
+                <!-- Barber Selection -->
+                <div class="form-group">
+                    <label>Select Your Barber <span class="required">*</span></label>
+                    <div class="barber-grid" id="barberGrid">
+                        <!-- Barbers will be loaded here -->
+                        <div style="grid-column: 1/-1; text-align: center; padding: 20px;">
+                            <div class="loading-spinner-small" style="margin: 0 auto;"></div>
+                            <p style="color: #64748b; font-size: 14px; margin-top: 10px;">Loading barbers...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Customer Info -->
                 <div class="form-group">
                     <label for="name">Full Name <span class="required">*</span></label>
                     <div class="input-group">
@@ -643,6 +642,7 @@
                     </div>
                 </div>
 
+                <!-- Service Selection -->
                 <div class="form-group">
                     <label>Service Type <span class="required">*</span></label>
                     <div class="service-container">
@@ -757,49 +757,6 @@
                                     <div class="service-price">$10</div>
                                 </label>
                             </div>
-                            <div class="service-option">
-                                <input type="radio" id="wax-nose" name="service" value="Wax Nose" data-duration="5">
-                                <label for="wax-nose" class="service-label">
-                                    <div class="service-info">
-                                        <div class="service-name">Wax Nose</div>
-                                        <div class="service-details"><span>⏱️ 5 mins</span></div>
-                                    </div>
-                                    <div class="service-price">$10</div>
-                                </label>
-                            </div>
-                            <div class="service-option">
-                                <input type="radio" id="hair-design" name="service" value="Hair Design"
-                                    data-duration="5">
-                                <label for="hair-design" class="service-label">
-                                    <div class="service-info">
-                                        <div class="service-name">Hair Design</div>
-                                        <div class="service-details"><span>⏱️ 5 mins</span></div>
-                                    </div>
-                                    <div class="service-price">$5+</div>
-                                </label>
-                            </div>
-                            <div class="service-option">
-                                <input type="radio" id="eyebrow" name="service" value="Eye Brow Cut or Design"
-                                    data-duration="5">
-                                <label for="eyebrow" class="service-label">
-                                    <div class="service-info">
-                                        <div class="service-name">Eye Brow Cut or Design</div>
-                                        <div class="service-details"><span>⏱️ 5 mins</span></div>
-                                    </div>
-                                    <div class="service-price">$10</div>
-                                </label>
-                            </div>
-                            <div class="service-option">
-                                <input type="radio" id="razor-shave" name="service" value="Hot Razor Shave"
-                                    data-duration="30">
-                                <label for="razor-shave" class="service-label">
-                                    <div class="service-info">
-                                        <div class="service-name">Hot Razor Shave</div>
-                                        <div class="service-details"><span>⏱️ 30 mins</span></div>
-                                    </div>
-                                    <div class="service-price">$40+</div>
-                                </label>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -811,14 +768,15 @@
         </div>
     </div>
 
-    <!-- Fullscreen Success Overlay -->
+    <!-- Success Overlay -->
     <div id="successOverlay">
         <div class="success-icon-wrap">
             <span class="success-checkmark">✅</span>
         </div>
         <div class="success-content">
             <h2>You're in line!</h2>
-            <p>We've added you to the queue. Keep an eye on your phone—we'll text you when it's time to head in.</p>
+            <p>We've added you to <span id="selectedBarberName"></span>'s queue. Keep an eye on your phone—we'll text
+                you when it's time to head in.</p>
             <div class="success-actions">
                 <button class="btn btn-primary" onclick="resetForm()">Done</button>
                 <button class="btn btn-secondary" onclick="resetForm()">Check in another customer</button>
@@ -827,46 +785,34 @@
     </div>
 
     <script>
-        // CONFIGURATION - Update this to your n8n webhook URL
-        const CHECKIN_URL = 'https://n8n.srv1146840.hstgr.cloud/webhook/checkin';
+        // CONFIGURATION
+        const CONFIG = {
+            checkinUrl: 'https://n8n.srv1146840.hstgr.cloud/webhook/checkin',
+            dashboardUrl: 'https://n8n.srv1146840.hstgr.cloud/webhook/api/queue',
+            // List of barbers (you can also fetch this from an API)
+            barbers: [
+                { id: 'john', name: 'John', avatar: '👨', color: '#6366f1' },
+                { id: 'mike', name: 'Mike', avatar: '👨‍🦱', color: '#8b5cf6' },
+                { id: 'sarah', name: 'Sarah', avatar: '👩', color: '#ec4899' },
+                { id: 'next_available', name: 'Next Available', avatar: '⚡', color: '#10b981' }
+            ]
+        };
 
-        const form = document.getElementById('checkinForm');
-        const submitBtn = document.getElementById('submitBtn');
-        const btnText = document.getElementById('btnText');
-        const errorMessage = document.getElementById('errorMessage');
-        const errorText = document.getElementById('errorText');
+        let queueData = [];
         const phoneInput = document.getElementById('phone');
 
-        // Get service duration from data attribute
-        function getServiceDuration() {
-            const selectedService = document.querySelector('input[name="service"]:checked');
-            return selectedService ? parseInt(selectedService.dataset.duration) : 40;
-        }
-
-        /**
-         * Normalize phone number - handles all autofill formats
-         * Strips country code (+1, 1) and formats to 10-digit US number
-         */
+        // Phone formatting functions
         function normalizePhoneNumber(value) {
-            // Remove all non-digit characters
             let digits = value.replace(/\D/g, '');
-
-            // Handle country code - if 11 digits and starts with 1, remove the 1
             if (digits.length === 11 && digits.startsWith('1')) {
                 digits = digits.substring(1);
             }
-
-            // If still more than 10 digits, take the last 10 (most likely the actual number)
             if (digits.length > 10) {
                 digits = digits.slice(-10);
             }
-
             return digits;
         }
 
-        /**
-         * Format phone number for display
-         */
         function formatPhoneDisplay(digits) {
             if (digits.length === 0) return '';
             if (digits.length <= 3) return digits;
@@ -874,72 +820,138 @@
             return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6, 10)}`;
         }
 
-        /**
-         * Handle phone input - works with typing AND autofill
-         */
         function handlePhoneInput(e) {
-            const cursorPosition = e.target.selectionStart;
-            const oldValue = e.target.value;
-            const oldLength = oldValue.length;
-
-            // Normalize and format
             const digits = normalizePhoneNumber(e.target.value);
             const formatted = formatPhoneDisplay(digits);
-
-            // Update input value
             e.target.value = formatted;
+        }
 
-            // Try to maintain cursor position for manual typing
-            if (e.inputType && !e.inputType.includes('delete')) {
-                const newLength = formatted.length;
-                const diff = newLength - oldLength;
-                let newPosition = cursorPosition + diff;
+        phoneInput.addEventListener('input', handlePhoneInput);
+        phoneInput.addEventListener('paste', (e) => setTimeout(() => handlePhoneInput(e), 0));
+        phoneInput.addEventListener('change', handlePhoneInput);
 
-                // Adjust for formatting characters
-                if (newPosition > formatted.length) newPosition = formatted.length;
-                if (newPosition < 0) newPosition = 0;
+        // Load queue data and calculate wait times
+        async function loadQueueData() {
+            try {
+                const response = await fetch(CONFIG.dashboardUrl);
+                if (!response.ok) {
+                    queueData = [];
+                    return;
+                }
 
-                // Delay to let the value update first
-                setTimeout(() => {
-                    e.target.setSelectionRange(newPosition, newPosition);
-                }, 0);
+                const rawText = await response.text();
+                if (!rawText || rawText.trim() === '' || rawText.trim() === '{}') {
+                    queueData = [];
+                    return;
+                }
+
+                let data = JSON.parse(rawText);
+                queueData = Array.isArray(data) ? data : (data && typeof data === 'object' ? [data] : []);
+            } catch (error) {
+                console.error('Error loading queue data:', error);
+                queueData = [];
             }
         }
 
-        // Listen for input (handles both typing and autofill)
-        phoneInput.addEventListener('input', handlePhoneInput);
+        // Calculate wait time for a specific barber
+        function calculateWaitTime(barberId) {
+            const activeStatuses = ['WAITING', 'NOTIFIED', 'IN_SERVICE'];
+            const barberQueue = queueData.filter(c =>
+                c &&
+                c.barber_id === barberId &&
+                activeStatuses.includes(String(c.status || '').toUpperCase().trim())
+            );
 
-        // Also handle paste events explicitly
-        phoneInput.addEventListener('paste', function (e) {
-            // Let the paste happen, then normalize
-            setTimeout(() => {
-                handlePhoneInput({ target: e.target });
+            if (barberQueue.length === 0) return 0;
+
+            // Calculate total wait time (sum of service durations)
+            const totalTime = barberQueue.reduce((sum, c) => {
+                return sum + (parseInt(c.service_duration) || 40);
             }, 0);
-        });
 
-        // Handle autofill detection via change event
-        phoneInput.addEventListener('change', handlePhoneInput);
+            return Math.ceil(totalTime);
+        }
+
+        // Render barber selection cards
+        function renderBarbers() {
+            const grid = document.getElementById('barberGrid');
+
+            const barbersHTML = CONFIG.barbers.map(barber => {
+                const waitTime = calculateWaitTime(barber.id);
+                const queueSize = queueData.filter(c => c && c.barber_id === barber.id).length;
+
+                let waitClass = 'wait-low';
+                let waitText = 'Available';
+
+                if (barber.id === 'next_available') {
+                    waitText = 'Auto-assign';
+                } else if (waitTime === 0) {
+                    waitText = 'No wait';
+                } else if (waitTime < 30) {
+                    waitClass = 'wait-low';
+                    waitText = `~${waitTime} min`;
+                } else if (waitTime < 60) {
+                    waitClass = 'wait-medium';
+                    waitText = `~${waitTime} min`;
+                } else {
+                    waitClass = 'wait-high';
+                    waitText = `~${Math.ceil(waitTime / 60)} hr`;
+                }
+
+                return `
+                    <div class="barber-option">
+                        <input type="radio" id="barber-${barber.id}" name="barber" value="${barber.id}" 
+                               ${barber.id === 'next_available' ? 'checked' : ''}>
+                        <label for="barber-${barber.id}" class="barber-card">
+                            <div class="barber-avatar" style="background: linear-gradient(135deg, ${barber.color}, ${barber.color}dd);">
+                                ${barber.avatar}
+                            </div>
+                            <div class="barber-name">${barber.name}</div>
+                            <div class="barber-wait">
+                                <span class="wait-indicator ${waitClass}"></span>
+                                ${waitText}
+                            </div>
+                        </label>
+                    </div>
+                `;
+            }).join('');
+
+            grid.innerHTML = barbersHTML;
+        }
+
+        // Get selected barber
+        function getSelectedBarber() {
+            const selected = document.querySelector('input[name="barber"]:checked');
+            return selected ? selected.value : 'next_available';
+        }
+
+        // Get service duration
+        function getServiceDuration() {
+            const selectedService = document.querySelector('input[name="service"]:checked');
+            return selectedService ? parseInt(selectedService.dataset.duration) : 40;
+        }
 
         // Handle form submission
-        form.addEventListener('submit', async (e) => {
+        document.getElementById('checkinForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            // Hide previous error message
-            errorMessage.style.display = 'none';
+            const errorMessage = document.getElementById('errorMessage');
+            const errorText = document.getElementById('errorText');
+            const submitBtn = document.getElementById('submitBtn');
+            const btnText = document.getElementById('btnText');
 
-            // Disable button and show loading
+            errorMessage.style.display = 'none';
             submitBtn.disabled = true;
-            btnText.innerHTML = '<span class="loading-spinner"></span>Joining Queue...';
+            btnText.textContent = 'Joining Queue...';
 
             try {
-                // Get form data
                 const name = document.getElementById('name').value.trim();
-                const phone = normalizePhoneNumber(phoneInput.value); // Use normalized phone
+                const phone = normalizePhoneNumber(phoneInput.value);
                 const service = document.querySelector('input[name="service"]:checked').value;
                 const serviceDuration = getServiceDuration();
+                const barberId = getSelectedBarber();
 
-                // Validate
-                if (!name || !phone || !service) {
+                if (!name || !phone || !service || !barberId) {
                     throw new Error('Please fill in all required fields');
                 }
 
@@ -947,31 +959,30 @@
                     throw new Error('Please enter a valid 10-digit phone number');
                 }
 
-                // Send to n8n (phone is already normalized to 10 digits)
-                const response = await fetch(CHECKIN_URL, {
+                const response = await fetch(CONFIG.checkinUrl, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         name: name,
                         phone: phone,
                         service: service,
-                        service_duration: serviceDuration
+                        service_duration: serviceDuration,
+                        barber_id: barberId
                     })
                 });
 
-                console.log('Response status:', response.status);
-                const responseText = await response.text();
-                console.log('Response:', responseText);
-
                 if (response.ok) {
-                    // Show fullscreen success
+                    const selectedBarberObj = CONFIG.barbers.find(b => b.id === barberId);
+                    document.getElementById('selectedBarberName').textContent = selectedBarberObj ? selectedBarberObj.name : 'your selected barber';
                     document.getElementById('successOverlay').style.display = 'flex';
-                    document.body.style.overflow = 'hidden'; // Prevent background scrolling
+                    document.body.style.overflow = 'hidden';
+                    document.getElementById('checkinForm').reset();
 
-                    form.reset();
+                    // Re-render barbers with default selection
+                    await loadQueueData();
+                    renderBarbers();
                 } else {
+                    const responseText = await response.text();
                     throw new Error(`Server error: ${response.status} - ${responseText}`);
                 }
             } catch (error) {
@@ -985,15 +996,23 @@
             }
         });
 
-        // Function to reset form and return from success screen
         function resetForm() {
             document.getElementById('successOverlay').style.display = 'none';
-            document.body.style.overflow = ''; // Restore scrolling
+            document.body.style.overflow = '';
             window.scrollTo({ top: 0, behavior: 'smooth' });
-
-            // Ensure first service is checked as default if needed
-            // (form.reset() already does this if it was checked in HTML)
         }
+
+        // Initialize
+        (async function init() {
+            await loadQueueData();
+            renderBarbers();
+
+            // Refresh wait times every 30 seconds
+            setInterval(async () => {
+                await loadQueueData();
+                renderBarbers();
+            }, 30000);
+        })();
     </script>
 </body>
 
