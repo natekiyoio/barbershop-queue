@@ -566,6 +566,14 @@
             padding: 14px 24px;
         }
 
+        .btn-callback {
+            background: #06b6d4;
+            color: white;
+            box-shadow: 0 0 15px rgba(6, 182, 212, 0.4);
+            font-size: 16px;
+            padding: 14px 24px;
+        }
+
         /* Empty State & Ready Bar */
         .empty-state {
             background: rgba(255, 255, 255, 0.05);
@@ -819,6 +827,7 @@
             startServiceUrl: 'https://n8n.srv1146840.hstgr.cloud/webhook/start-service',
             completeServiceUrl: 'https://n8n.srv1146840.hstgr.cloud/webhook/complete-service',
             noShowUrl: 'https://n8n.srv1146840.hstgr.cloud/webhook/no-show',
+            callbackUrl: 'https://n8n.srv1146840.hstgr.cloud/webhook/customer-callback',
             cancelUrl: 'https://n8n.srv1146840.hstgr.cloud/webhook/customer-cancel',
             barbers: [
                 { id: 'john', name: 'John', avatar: '👨', color: '#6366f1' },
@@ -995,6 +1004,7 @@
                     <div class="actions">
                         ${c.status !== 'IN_SERVICE' ? `<button class="btn btn-start" onclick="updateStatus('${c.customer_id}', 'start')">▶️ Start</button>` : ''}
                         <button class="btn btn-complete" onclick="updateStatus('${c.customer_id}', 'complete')">✅ Complete</button>
+                        <button class="btn btn-callback" onclick="updateStatus('${c.customer_id}', 'callback')">📲 Come Back</button>
                         <button class="btn btn-cancel" onclick="updateStatus('${c.customer_id}', 'cancel')">🚫 Cancel</button>
                         <button class="btn btn-noshow" onclick="updateStatus('${c.customer_id}', 'noshow')">❌ No Show</button>
                     </div>
@@ -1055,7 +1065,8 @@
                 'start': CONFIG.startServiceUrl,
                 'complete': CONFIG.completeServiceUrl,
                 'cancel': CONFIG.cancelUrl,
-                'noshow': CONFIG.noShowUrl
+                'noshow': CONFIG.noShowUrl,
+                'callback': CONFIG.callbackUrl
             };
 
             try {
@@ -1071,7 +1082,7 @@
                 });
 
                 // If it's a destructive action (complete/cancel/noshow), hide it now
-                if (action !== 'start') {
+                if (action !== 'start' && action !== 'callback') {
                     if (card) {
                         card.style.maxHeight = '0';
                         card.style.margin = '0';
@@ -1080,13 +1091,20 @@
                         card.style.opacity = '0';
                         setTimeout(() => card.remove(), 400);
                     }
-                } else {
+                } else if (action === 'start') {
                     // Start service just updates status locally for now
                     const badge = card.querySelector('.status-badge');
                     if (badge) {
                         badge.textContent = 'IN_SERVICE';
                         badge.className = 'status-badge status-in_service';
                     }
+                } else if (action === 'callback') {
+                    // Callback just sends SMS, restore card appearance and show feedback
+                    if (card) {
+                        card.style.opacity = '1';
+                        card.style.transform = 'scale(1)';
+                    }
+                    logActivity('Barber', 'Come back SMS sent to customer', 'success');
                 }
             } catch (err) {
                 console.error(err);
