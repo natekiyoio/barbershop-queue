@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Barber Queue Dashboard</title>
+    <title>Walk-In Check-In</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -21,9 +21,6 @@
             --secondary: #a78bfa;
             --secondary-glow: rgba(167, 139, 250, 0.5);
             --success: #34d399;
-            --danger: #f87171;
-            --warning: #fbbf24;
-            --info: #60a5fa;
             --text-main: #f8fafc;
             --text-muted: #cbd5e1;
             --bg-dark: #0c0a2e;
@@ -31,15 +28,25 @@
             --glass-border: rgba(255, 255, 255, 0.15);
         }
 
+        html {
+            height: auto;
+            overflow-y: visible;
+            scroll-behavior: smooth;
+        }
+
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: #0c0a2e;
             min-height: 100vh;
-            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
             position: relative;
             overflow-x: hidden;
-            display: flex;
-            justify-content: center;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         /* High-performance CSS Animated Background */
@@ -53,7 +60,6 @@
             background: #0c0a2e;
             overflow: hidden;
             transform: translateZ(0);
-            /* Hardware acceleration */
         }
 
         .blob {
@@ -80,26 +86,16 @@
             animation-duration: 25s;
         }
 
-        .blob-3 {
-            top: 40%;
-            left: 50%;
-            width: 300px;
-            height: 300px;
-            background: radial-gradient(circle, rgba(79, 70, 229, 0.1) 0%, transparent 70%);
-            animation-duration: 30s;
-        }
-
         @keyframes move {
             from {
                 transform: translate(0, 0) rotate(0deg) scale(1);
             }
 
             to {
-                transform: translate(100px, 100px) rotate(90deg) scale(1.2);
+                transform: translate(80px, 80px) rotate(90deg) scale(1.1);
             }
         }
 
-        /* Animated background elements */
         body::before {
             content: '';
             position: fixed;
@@ -107,11 +103,10 @@
             height: 500px;
             background: radial-gradient(circle, rgba(99, 102, 241, 0.3) 0%, transparent 70%);
             border-radius: 50%;
-            top: -250px;
-            right: -250px;
+            top: -200px;
+            left: -200px;
             animation: float 20s ease-in-out infinite;
             pointer-events: none;
-            z-index: 0;
         }
 
         body::after {
@@ -121,11 +116,10 @@
             height: 400px;
             background: radial-gradient(circle, rgba(139, 92, 246, 0.3) 0%, transparent 70%);
             border-radius: 50%;
-            bottom: -200px;
-            left: -200px;
+            bottom: -150px;
+            right: -150px;
             animation: float 15s ease-in-out infinite reverse;
             pointer-events: none;
-            z-index: 0;
         }
 
         @keyframes float {
@@ -136,7 +130,7 @@
             }
 
             50% {
-                transform: translate(50px, 50px) scale(1.1);
+                transform: translate(40px, 40px) scale(1.1);
             }
         }
 
@@ -164,61 +158,26 @@
             }
         }
 
-        @keyframes rotate {
-            from {
-                transform: rotate(0deg);
-            }
-
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        @keyframes bounce {
-
-            0%,
-            20%,
-            50%,
-            80%,
-            100% {
-                transform: translateY(0);
-            }
-
-            40% {
-                transform: translateY(-20px);
-            }
-
-            60% {
-                transform: translateY(-10px);
-            }
-        }
-
         .container {
+            max-width: 600px;
             width: 100%;
-            max-width: 1200px;
-            margin: 0 auto;
             position: relative;
             z-index: 1;
+            animation: slideUp 0.6s ease-out;
         }
 
-        .header {
+        .card {
             background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(20px);
-            padding: 30px;
-            border-radius: 24px;
-            margin-bottom: 30px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
-            animation: slideUp 0.6s ease-out;
+            backdrop-filter: blur(25px);
+            border-radius: 28px;
+            padding: 40px;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.5);
             border: 1px solid rgba(255, 255, 255, 0.15);
         }
 
-        .header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        .header {
+            text-align: center;
+            margin-bottom: 35px;
         }
 
         .header h1 {
@@ -226,471 +185,476 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            font-size: clamp(32px, 5vw, 48px);
+            font-size: 42px;
             font-weight: 800;
-            letter-spacing: -1.5px;
-            filter: drop-shadow(0 0 15px var(--primary-glow));
-            text-align: center;
+            margin-bottom: 12px;
+            letter-spacing: -1px;
+            filter: drop-shadow(0 0 12px var(--primary-glow));
         }
 
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 20px;
+        .header p {
+            color: #64748b;
+            font-size: 15px;
+            line-height: 1.6;
         }
 
-        .stat {
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
-            padding: 20px;
-            border-radius: 15px;
-            border: 1px solid rgba(99, 102, 241, 0.2);
-            transition: all 0.3s ease;
+        .form-group {
+            margin-bottom: 25px;
         }
 
-        .stat:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
-        }
-
-        .stat-number {
-            font-size: 32px;
-            font-weight: 800;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+        label {
             display: block;
-            margin-bottom: 5px;
-        }
-
-        .stat-label {
-            color: var(--text-muted);
-            font-size: 14px;
-            font-weight: 600;
-            text-transform: uppercase;
+            margin-bottom: 10px;
+            font-weight: 700;
+            color: var(--text-main);
+            font-size: 16px;
             letter-spacing: 0.5px;
         }
 
-        .controls {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-            animation: slideUp 0.6s ease-out 0.1s backwards;
+        .required {
+            color: #ef4444;
+            margin-left: 4px;
         }
 
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
-
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .btn-refresh {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            color: white;
-            padding: 18px 36px;
-            font-size: 18px;
-            border-radius: 16px;
-            box-shadow: 0 0 20px var(--primary-glow);
-        }
-
-        .btn-refresh:hover {
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 0 30px var(--primary-glow);
-        }
-
-        .btn-hub {
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            border: 2px solid var(--primary);
-            padding: 14px 28px;
+        input,
+        select {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid var(--glass-border);
+            border-radius: 14px;
             font-size: 16px;
-            box-shadow: 0 0 15px var(--primary-glow);
-        }
-
-        .btn-back-main {
-            font-size: 20px;
-            padding: 16px 32px;
-            margin-bottom: 20px;
-        }
-
-        /* Barber Hub Grid */
-        .barber-hub {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-            animation: slideUp 0.6s ease-out;
-        }
-
-        .barber-hub-card {
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
             background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(20px);
-            border-radius: 24px;
-            padding: 30px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            text-align: center;
-        }
-
-        .barber-hub-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        }
-
-        .barber-avatar-large {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 60px;
-            margin: 0 auto 25px;
-            box-shadow: 0 0 30px var(--primary-glow);
-            border: 3px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .barber-hub-name {
-            font-size: 28px;
-            font-weight: 800;
             color: var(--text-main);
-            margin-bottom: 10px;
-            text-shadow: 0 0 10px var(--primary-glow);
         }
 
-        .wait-time-badge {
-            display: inline-block;
-            padding: 8px 16px;
-            background: rgba(52, 211, 153, 0.15);
-            color: var(--success);
-            border-radius: 12px;
-            font-weight: 700;
-            font-size: 14px;
-            margin-bottom: 15px;
-            border: 1px solid rgba(52, 211, 153, 0.3);
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px var(--primary-glow);
+            background: rgba(255, 255, 255, 0.1);
         }
 
-        .queue-card {
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(25px);
-            border-radius: 20px;
-            padding: 30px;
-            margin-bottom: 25px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 1px solid rgba(255, 255, 255, 0.15);
+        .input-group {
             position: relative;
-            overflow: hidden;
-            animation: slideUp 0.6s ease-out backwards;
         }
 
-        .queue-card.removing {
-            animation: cardSlideOut 0.4s ease-out forwards;
+        .input-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 18px;
             pointer-events: none;
         }
 
-        @keyframes cardSlideOut {
-            to {
-                opacity: 0;
-                transform: translateX(100px) scale(0.9);
-            }
+        .input-group input {
+            padding-left: 45px;
         }
 
-        .position-badge {
+        .phone-input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .country-code {
             position: absolute;
-            top: 20px;
-            right: 20px;
-            width: 50px;
-            height: 50px;
+            left: 45px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-main);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .phone-input-wrapper input {
+            padding-left: 80px;
+        }
+
+        /* Barber Selection Cards */
+        .barber-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .barber-option {
+            position: relative;
+        }
+
+        .barber-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .barber-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 16px;
+            border: 2px solid var(--glass-border);
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(255, 255, 255, 0.05);
+            text-align: center;
+        }
+
+        .barber-avatar {
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
             background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             color: white;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 800;
-            font-size: 20px;
-            box-shadow: 0 5px 15px rgba(99, 102, 241, 0.4);
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px var(--primary-glow);
         }
 
-        .customer-name {
-            font-size: 32px;
-            font-weight: 800;
+        .barber-name {
+            font-weight: 700;
             color: var(--text-main);
-            margin-bottom: 15px;
+            font-size: 16px;
+            margin-bottom: 6px;
+        }
+
+        .barber-wait {
+            font-size: 13px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            justify-content: center;
+        }
+
+        .wait-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .wait-low {
+            background: #10b981;
+        }
+
+        .wait-medium {
+            background: #f59e0b;
+        }
+
+        .wait-high {
+            background: #ef4444;
+        }
+
+        .barber-option input[type="radio"]:checked+.barber-card {
+            border-color: var(--primary);
+            background: rgba(129, 140, 248, 0.15);
+            box-shadow: 0 0 20px var(--primary-glow);
+            transform: translateY(-4px);
+        }
+
+        .barber-option input[type="radio"]:checked+.barber-card .barber-avatar {
+            box-shadow: 0 0 15px var(--primary-glow);
+            transform: scale(1.1);
+        }
+
+        .barber-option input[type="radio"]:checked+.barber-card .barber-name {
+            color: var(--primary);
             text-shadow: 0 0 8px var(--primary-glow);
         }
 
-        .customer-details {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin-bottom: 15px;
+        .barber-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
         }
 
-        .detail-item {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 18px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--text-muted);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .status-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 20px;
-            border-radius: 12px;
-            font-size: 13px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .status-waiting {
-            background: linear-gradient(135deg, #fef3c7, #fde68a);
-            color: #92400e;
-        }
-
-        .status-in-service {
-            background: linear-gradient(135deg, #d1fae5, #a7f3d0);
-            color: #065f46;
-        }
-
-        .time-info {
-            display: flex;
-            gap: 15px;
-            margin-top: 15px;
-            flex-wrap: wrap;
-        }
-
-        .time-item {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 6px 12px;
-            background: rgba(203, 213, 225, 0.3);
-            border-radius: 8px;
-            font-size: 13px;
-            font-weight: 500;
-            color: #475569;
-        }
-
-        .actions {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            margin-top: 20px;
-        }
-
-        .btn-start {
-            background: var(--success);
-            color: white;
-            box-shadow: 0 0 15px rgba(52, 211, 153, 0.4);
-            font-size: 16px;
-            padding: 14px 24px;
-        }
-
-        .btn-complete {
-            background: var(--info);
-            color: white;
-            box-shadow: 0 0 15px rgba(96, 165, 250, 0.4);
-            font-size: 16px;
-            padding: 14px 24px;
-        }
-
-        .btn-cancel {
-            background: var(--warning);
-            color: white;
-            box-shadow: 0 0 15px rgba(251, 191, 36, 0.4);
-            font-size: 16px;
-            padding: 14px 24px;
-        }
-
-        .btn-noshow {
-            background: var(--danger);
-            color: white;
-            box-shadow: 0 0 15px rgba(248, 113, 113, 0.4);
-            font-size: 16px;
-            padding: 14px 24px;
-        }
-
-        /* Empty State */
-        .empty-state {
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            border-radius: 24px;
-            overflow: hidden;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
-            animation: slideUp 0.6s ease-out;
-            text-align: center;
-        }
-
-        .empty-state-hero {
-            background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
-            padding: 60px 40px;
-            color: white;
-        }
-
-        .empty-icon-container {
-            position: relative;
+        .loading-spinner-small {
             display: inline-block;
-            margin-bottom: 25px;
-        }
-
-        .empty-icon {
-            font-size: 80px;
-            animation: bounce 3s ease-in-out infinite;
-        }
-
-        .empty-state-content {
-            padding: 40px;
-        }
-
-        .time-display {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin-bottom: 40px;
-            flex-wrap: wrap;
-        }
-
-        .time-card {
-            background: rgba(99, 102, 241, 0.05);
-            padding: 20px 30px;
-            border-radius: 16px;
-            border: 1px solid rgba(99, 102, 241, 0.1);
-        }
-
-        .time-card-value {
-            font-size: 28px;
-            font-weight: 800;
-            color: var(--primary);
-        }
-
-        .ready-status {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            padding: 15px;
-            background: rgba(16, 185, 129, 0.05);
-            border-radius: 12px;
-            margin-bottom: 30px;
-        }
-
-        .ready-dot {
-            width: 10px;
-            height: 10px;
-            background: var(--success);
+            width: 12px;
+            height: 12px;
+            border: 2px solid #e2e8f0;
+            border-top-color: var(--primary);
             border-radius: 50%;
-            animation: pulse 2s infinite;
+            animation: spin 0.8s linear infinite;
         }
 
-        /* Sidebar Styles */
-        @media (min-width: 1024px) {
-            .container {
-                display: grid;
-                grid-template-columns: 1fr 350px;
-                gap: 30px;
-            }
-
-            .sidebar {
-                grid-column: 2;
-                grid-row: 1 / 10;
-                position: sticky;
-                top: 20px;
-                background: var(--card-bg);
-                border-radius: 24px;
-                padding: 30px;
-                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-            }
-        }
-
-        .sidebar {
-            display: none;
-        }
-
-        .sidebar-section {
-            margin-bottom: 30px;
-        }
-
-        .sidebar-title {
-            font-size: 18px;
-            font-weight: 800;
-            color: #1e293b;
-            margin-bottom: 20px;
-        }
-
-        .activity-feed {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .activity-item {
-            padding: 12px;
-            background: rgba(99, 102, 241, 0.05);
-            border-radius: 12px;
-            border-left: 3px solid var(--primary);
-            font-size: 13px;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 100px;
-            color: white;
-        }
-
-        .loading-spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid rgba(255, 255, 255, 0.1);
-            border-top-color: white;
-            border-radius: 50%;
-            animation: rotate 1s linear infinite;
-            margin: 0 auto 20px;
-        }
-
-        @keyframes rotate {
+        @keyframes spin {
             to {
                 transform: rotate(360deg);
             }
         }
 
-        .back-btn {
-            display: none;
+        /* Service Selection */
+        .service-container {
+            margin-bottom: 25px;
+        }
+
+        .service-scroll {
+            max-height: 380px;
+            overflow-y: auto;
+            padding: 8px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.05);
+            -webkit-overflow-scrolling: touch;
+            border: 1px solid var(--glass-border);
+        }
+
+        .service-option {
+            position: relative;
+            margin-bottom: 8px;
+        }
+
+        .service-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .service-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            border: 2px solid var(--glass-border);
+            border-radius: 14px;
             cursor: pointer;
-            padding: 8px 16px;
-            background: rgba(99, 102, 241, 0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: rgba(255, 255, 255, 0.03);
+            gap: 12px;
+        }
+
+        .service-info {
+            flex: 1;
+            text-align: left;
+        }
+
+        .service-name {
+            font-weight: 700;
+            color: var(--text-main);
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .service-details {
+            display: flex;
+            gap: 12px;
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .service-price {
+            font-weight: 800;
             color: var(--primary);
-            border-radius: 8px;
-            font-weight: 600;
-            margin-bottom: 10px;
+            font-size: 18px;
+            white-space: nowrap;
+            text-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        .service-option input[type="radio"]:checked+.service-label {
+            border-color: var(--primary);
+            background: rgba(129, 140, 248, 0.15);
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        .service-option input[type="radio"]:checked+.service-label .service-name {
+            color: var(--primary);
+            text-shadow: 0 0 8px var(--primary-glow);
+        }
+
+        .service-label:hover {
+            border-color: var(--primary);
+            transform: translateX(4px);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 16px;
             border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            box-shadow: 0 0 25px var(--primary-glow);
+            padding: 20px;
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: 2px;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(99, 102, 241, 0.5);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .error-message {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            border: 2px solid #ef4444;
+            color: #991b1b;
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: none;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        .error-message p {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        /* Success Overlay */
+        #successOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(30, 27, 75, 0.98), rgba(49, 46, 129, 0.98));
+            backdrop-filter: blur(15px);
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            text-align: center;
+            color: white;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .success-icon-wrap {
+            width: 120px;
+            height: 120px;
+            background: rgba(16, 185, 129, 0.15);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .success-checkmark {
+            font-size: 64px;
+            animation: checkPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            display: inline-block;
+        }
+
+        @keyframes checkPop {
+            0% {
+                transform: scale(0) rotate(-15deg);
+                opacity: 0;
+            }
+
+            70% {
+                transform: scale(1.2) rotate(10deg);
+            }
+
+            100% {
+                transform: scale(1) rotate(0);
+                opacity: 1;
+            }
+        }
+
+        .success-content h2 {
+            font-size: 38px;
+            font-weight: 800;
+            margin-bottom: 16px;
+            background: linear-gradient(to bottom, #ffffff, #a5b4fc);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .success-content p {
+            font-size: 18px;
+            color: #94a3b8;
+            line-height: 1.6;
+            margin-bottom: 40px;
+        }
+
+        .success-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+            max-width: 320px;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 600px) {
+            body {
+                display: block;
+                padding: 20px 12px 60px 12px;
+                overflow-y: auto;
+            }
+
+            .card {
+                padding: 24px 16px;
+                border-radius: 20px;
+            }
+
+            .header h1 {
+                font-size: 26px;
+            }
+
+            .barber-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .service-scroll {
+                max-height: 400px;
+            }
         }
     </style>
 </head>
@@ -699,79 +663,199 @@
     <div class="bg-animate">
         <div class="blob blob-1"></div>
         <div class="blob blob-2"></div>
-        <div class="blob blob-3"></div>
     </div>
     <div class="container">
-        <div id="loading" class="loading">
-            <div class="loading-spinner"></div>
-            <div class="loading-text">Loading premium dashboard...</div>
-        </div>
-
-        <div id="dashboard" style="display: none;">
+        <div class="card">
             <div class="header">
-                <div class="header-top">
-                    <div>
-                        <button id="backBtn" class="back-btn" onclick="showHub()">← Back to Hub</button>
-                        <h1 id="dashboardTitle">🪒 Queue Dashboard</h1>
-                    </div>
-                </div>
-                <div class="stats">
-                    <div class="stat">
-                        <span class="stat-number" id="totalActive">0</span>
-                        <span class="stat-label">Active</span>
-                    </div>
-                    <div class="stat">
-                        <span class="stat-number" id="totalWaiting">0</span>
-                        <span class="stat-label">Waiting</span>
-                    </div>
-                    <div class="stat">
-                        <span class="stat-number" id="totalInService">0</span>
-                        <span class="stat-label">In Service</span>
-                    </div>
-                </div>
+                <h1>✂️ Walk-In Check-In</h1>
+                <p>Select your barber and service to join the queue</p>
             </div>
 
-            <div class="controls">
-                <button class="btn btn-refresh" onclick="loadDashboard()">
-                    <span>🔄</span>
-                    <span>Refresh</span>
-                </button>
+            <div id="errorMessage" class="error-message">
+                <p id="errorText"></p>
             </div>
 
-            <div id="mainContent"></div>
-
-            <aside class="sidebar">
-                <div class="sidebar-section">
-                    <h3 class="sidebar-title">📊 Statistics</h3>
-                    <div class="stat-card"
-                        style="background: rgba(99, 102, 241, 0.05); padding: 20px; border-radius: 12px;">
-                        <div style="font-size: 12px; font-weight: 700; color: #64748b; text-transform: uppercase;">Avg
-                            Wait</div>
-                        <div style="font-size: 24px; font-weight: 800; color: var(--primary);" id="avgWaitTime">~12 min
+            <form id="checkinForm">
+                <!-- Barber Selection -->
+                <div class="form-group">
+                    <label>Select Your Barber <span class="required">*</span></label>
+                    <div class="barber-grid" id="barberGrid">
+                        <!-- Barbers will be loaded here -->
+                        <div style="grid-column: 1/-1; text-align: center; padding: 20px;">
+                            <div class="loading-spinner-small" style="margin: 0 auto;"></div>
+                            <p style="color: #64748b; font-size: 14px; margin-top: 10px;">Loading barbers...</p>
                         </div>
                     </div>
                 </div>
 
-                <div class="sidebar-section">
-                    <h3 class="sidebar-title">🔔 Recent Activity</h3>
-                    <div id="activityFeed" class="activity-feed"></div>
+                <!-- Customer Info -->
+                <div class="form-group">
+                    <label for="name">Full Name <span class="required">*</span></label>
+                    <div class="input-group">
+                        <span class="input-icon">👤</span>
+                        <input type="text" id="name" name="name" placeholder="Enter your name" required
+                            autocomplete="name">
+                    </div>
                 </div>
 
-                <div class="sidebar-section">
-                    <h3 class="sidebar-title">💡 Quick Tip</h3>
-                    <p id="quickTip" style="font-size: 13px; color: #64748b; font-style: italic;"></p>
+                <div class="form-group">
+                    <label for="phone">Phone Number <span class="required">*</span></label>
+                    <div class="input-group phone-input-wrapper">
+                        <span class="input-icon">📱</span>
+                        <span class="country-code">+1</span>
+                        <input type="tel" id="phone" name="phone" placeholder="(555) 123-4567" required
+                            autocomplete="tel-national">
+                    </div>
                 </div>
-            </aside>
+
+                <!-- Service Selection -->
+                <div class="form-group">
+                    <label>Service Type <span class="required">*</span></label>
+                    <div class="service-container">
+                        <div class="service-scroll">
+                            <div class="service-option">
+                                <input type="radio" id="mens-regular" name="service" value="Men's Regular Cut"
+                                    data-duration="40" checked>
+                                <label for="mens-regular" class="service-label">
+                                    <div class="service-info">
+                                        <div class="service-name">Men's Regular Cut</div>
+                                        <div class="service-details"><span>⏱️ 40 mins</span></div>
+                                    </div>
+                                    <div class="service-price">$30</div>
+                                </label>
+                            </div>
+                            <div class="service-option">
+                                <input type="radio" id="skin-fade" name="service" value="Skin Fade (Only)"
+                                    data-duration="40">
+                                <label for="skin-fade" class="service-label">
+                                    <div class="service-info">
+                                        <div class="service-name">Skin Fade (Only)</div>
+                                        <div class="service-details"><span>⏱️ 40 mins</span></div>
+                                    </div>
+                                    <div class="service-price">$30</div>
+                                </label>
+                            </div>
+                            <div class="service-option">
+                                <input type="radio" id="skin-fade-beard" name="service"
+                                    value="Skin Fade + Beard Trim & Line Up" data-duration="60">
+                                <label for="skin-fade-beard" class="service-label">
+                                    <div class="service-info">
+                                        <div class="service-name">Skin Fade + Beard Trim & Line Up</div>
+                                        <div class="service-details"><span>⏱️ 1 Hr</span></div>
+                                    </div>
+                                    <div class="service-price">$40</div>
+                                </label>
+                            </div>
+                            <div class="service-option">
+                                <input type="radio" id="taper-fade" name="service" value="Taper Fade + Beard Line Up"
+                                    data-duration="60">
+                                <label for="taper-fade" class="service-label">
+                                    <div class="service-info">
+                                        <div class="service-name">Taper Fade + Beard Line Up</div>
+                                        <div class="service-details"><span>⏱️ 1 Hr</span></div>
+                                    </div>
+                                    <div class="service-price">$35</div>
+                                </label>
+                            </div>
+                            <div class="service-option">
+                                <input type="radio" id="hair-beard-only" name="service"
+                                    value="Hair + Beard Line Up (Only)" data-duration="20">
+                                <label for="hair-beard-only" class="service-label">
+                                    <div class="service-info">
+                                        <div class="service-name">Hair + Beard Line Up (Only)</div>
+                                        <div class="service-details"><span>⏱️ 20 mins</span></div>
+                                    </div>
+                                    <div class="service-price">$20</div>
+                                </label>
+                            </div>
+                            <div class="service-option">
+                                <input type="radio" id="womens-cut" name="service" value="Women's Hair Cut"
+                                    data-duration="40">
+                                <label for="womens-cut" class="service-label">
+                                    <div class="service-info">
+                                        <div class="service-name">Women's Hair Cut</div>
+                                        <div class="service-details"><span>⏱️ 40 mins</span></div>
+                                    </div>
+                                    <div class="service-price">$30</div>
+                                </label>
+                            </div>
+                            <div class="service-option">
+                                <input type="radio" id="seniors" name="service" value="Seniors' Haircut"
+                                    data-duration="30">
+                                <label for="seniors" class="service-label">
+                                    <div class="service-info">
+                                        <div class="service-name">Seniors' Haircut</div>
+                                        <div class="service-details"><span>⏱️ 30 mins</span></div>
+                                    </div>
+                                    <div class="service-price">$25</div>
+                                </label>
+                            </div>
+                            <div class="service-option">
+                                <input type="radio" id="kids-cut" name="service" value="Kids' Cut" data-duration="30">
+                                <label for="kids-cut" class="service-label">
+                                    <div class="service-info">
+                                        <div class="service-name">Kids' Cut</div>
+                                        <div class="service-details"><span>⏱️ 30 mins</span></div>
+                                    </div>
+                                    <div class="service-price">$20</div>
+                                </label>
+                            </div>
+                            <div class="service-option">
+                                <input type="radio" id="luxury" name="service" value="Luxury Service"
+                                    data-duration="95">
+                                <label for="luxury" class="service-label">
+                                    <div class="service-info">
+                                        <div class="service-name">Luxury Service</div>
+                                        <div class="service-details"><span>⏱️ 1 Hr 35 mins</span><span>💈 Full
+                                                Package</span></div>
+                                    </div>
+                                    <div class="service-price">$60</div>
+                                </label>
+                            </div>
+                            <div class="service-option">
+                                <input type="radio" id="mens-wash" name="service" value="Men's Wash (Buzz Cut)"
+                                    data-duration="10">
+                                <label for="mens-wash" class="service-label">
+                                    <div class="service-info">
+                                        <div class="service-name">Men's Wash (Buzz Cut)</div>
+                                        <div class="service-details"><span>⏱️ 10 mins</span></div>
+                                    </div>
+                                    <div class="service-price">$10</div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary" id="submitBtn">
+                    <span id="btnText">Join Queue</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Success Overlay -->
+    <div id="successOverlay">
+        <div class="success-icon-wrap">
+            <span class="success-checkmark">✅</span>
+        </div>
+        <div class="success-content">
+            <h2>You're in line!</h2>
+            <p>We've added you to <span id="selectedBarberName"></span>'s queue. Keep an eye on your phone—we'll text
+                you when it's time to head in.</p>
+            <div class="success-actions">
+                <button class="btn btn-primary" onclick="resetForm()">Done</button>
+                <button class="btn btn-secondary" onclick="resetForm()">Check in another customer</button>
+            </div>
         </div>
     </div>
 
     <script>
+        // CONFIGURATION
         const CONFIG = {
+            checkinUrl: 'https://n8n.srv1146840.hstgr.cloud/webhook/checkin',
             dashboardUrl: 'https://n8n.srv1146840.hstgr.cloud/webhook/api/queue',
-            startServiceUrl: 'https://n8n.srv1146840.hstgr.cloud/webhook/start-service',
-            completeServiceUrl: 'https://n8n.srv1146840.hstgr.cloud/webhook/complete-service',
-            noShowUrl: 'https://n8n.srv1146840.hstgr.cloud/webhook/no-show',
-            cancelUrl: 'https://n8n.srv1146840.hstgr.cloud/webhook/customer-cancel',
+            // List of barbers (you can also fetch this from an API)
             barbers: [
                 { id: 'john', name: 'John', avatar: '👨', color: '#6366f1' },
                 { id: 'mike', name: 'Mike', avatar: '👨‍🦱', color: '#8b5cf6' },
@@ -780,299 +864,232 @@
             ]
         };
 
-        const QUOTES = [
-            { text: "Your hair is the crown you never take off.", author: "Traditional" },
-            { text: "Invest in your hair, it is the crown you never take off.", author: "Barber Wisdom" },
-            { text: "Success is the result of preparation meeting opportunity.", author: "Seneca" }
-        ];
+        let queueData = [];
+        const phoneInput = document.getElementById('phone');
 
-        const TIPS = [
-            "Keep your station clean between clients.",
-            "Greet every customer with a smile.",
-            "Double check details before finishing a cut."
-        ];
-
-        let allCustomers = [];
-        let currentBarberId = 'hub';
-
-        // Initialize with API limit optimizations
-        async function init() {
-            await loadDashboard();
-            updateClock();
-            setInterval(updateClock, 1000);
-            rotateTip();
-            setInterval(rotateTip, 10000);
-
-            let refreshInterval;
-
-            function startRefreshing() {
-                if (refreshInterval) clearInterval(refreshInterval);
-                refreshInterval = setInterval(loadDashboard, 45000); // 45s for API limit optimization
+        // Phone formatting functions
+        function normalizePhoneNumber(value) {
+            let digits = value.replace(/\D/g, '');
+            if (digits.length === 11 && digits.startsWith('1')) {
+                digits = digits.substring(1);
             }
-
-            function stopRefreshing() {
-                if (refreshInterval) clearInterval(refreshInterval);
+            if (digits.length > 10) {
+                digits = digits.slice(-10);
             }
-
-            // Page Visibility API - Stop refreshing when tab is hidden
-            document.addEventListener('visibilitychange', () => {
-                if (document.hidden) {
-                    stopRefreshing();
-                } else {
-                    loadDashboard(); // Refresh immediately when returning
-                    startRefreshing();
-                }
-            });
-
-            startRefreshing();
+            return digits;
         }
 
-        async function loadDashboard() {
+        function formatPhoneDisplay(digits) {
+            if (digits.length === 0) return '';
+            if (digits.length <= 3) return digits;
+            if (digits.length <= 6) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
+            return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6, 10)}`;
+        }
+
+        function handlePhoneInput(e) {
+            const digits = normalizePhoneNumber(e.target.value);
+            const formatted = formatPhoneDisplay(digits);
+            e.target.value = formatted;
+        }
+
+        phoneInput.addEventListener('input', handlePhoneInput);
+        phoneInput.addEventListener('paste', (e) => setTimeout(() => handlePhoneInput(e), 0));
+        phoneInput.addEventListener('change', handlePhoneInput);
+
+        // Load queue data and calculate wait times
+        async function loadQueueData() {
             try {
                 const response = await fetch(CONFIG.dashboardUrl);
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                if (!response.ok) {
+                    queueData = [];
+                    return;
+                }
 
                 const rawText = await response.text();
                 if (!rawText || rawText.trim() === '' || rawText.trim() === '{}') {
-                    allCustomers = [];
+                    queueData = [];
+                    return;
+                }
+
+                let data = JSON.parse(rawText);
+                queueData = Array.isArray(data) ? data : (data && typeof data === 'object' ? [data] : []);
+            } catch (error) {
+                console.error('Error loading queue data:', error);
+                queueData = [];
+            }
+        }
+
+        // Calculate wait time for a specific barber
+        function calculateWaitTime(barberId) {
+            const activeStatuses = ['WAITING', 'NOTIFIED', 'IN_SERVICE'];
+            const barberQueue = queueData.filter(c =>
+                c &&
+                c.barber_id === barberId &&
+                activeStatuses.includes(String(c.status || '').toUpperCase().trim())
+            );
+
+            if (barberQueue.length === 0) return 0;
+
+            // Calculate total wait time (sum of service durations)
+            const totalTime = barberQueue.reduce((sum, c) => {
+                return sum + (parseInt(c.service_duration) || 40);
+            }, 0);
+
+            return Math.ceil(totalTime);
+        }
+
+        // Render barber selection cards
+        function renderBarbers() {
+            const grid = document.getElementById('barberGrid');
+
+            const barbersHTML = CONFIG.barbers.map(barber => {
+                const waitTime = calculateWaitTime(barber.id);
+                const queueSize = queueData.filter(c => c && c.barber_id === barber.id).length;
+
+                let waitClass = 'wait-low';
+                let waitText = 'Available';
+
+                if (barber.id === 'next_available') {
+                    waitText = 'Auto-assign';
+                } else if (waitTime === 0) {
+                    waitText = 'No wait';
+                } else if (waitTime < 30) {
+                    waitClass = 'wait-low';
+                    waitText = `~${waitTime} min`;
+                } else if (waitTime < 60) {
+                    waitClass = 'wait-medium';
+                    waitText = `~${waitTime} min`;
                 } else {
-                    const data = JSON.parse(rawText);
-                    const activeStatuses = ['WAITING', 'NOTIFIED', 'IN_SERVICE'];
-                    allCustomers = (Array.isArray(data) ? data : [data]).filter(c =>
-                        c && activeStatuses.includes(String(c.status).toUpperCase())
-                    );
+                    waitClass = 'wait-high';
+                    waitText = `~${Math.ceil(waitTime / 60)} hr`;
                 }
 
-                render();
-                updateStats();
-
-                document.getElementById('loading').style.display = 'none';
-                document.getElementById('dashboard').style.display = 'grid';
-            } catch (err) {
-                console.warn('Dashboard load error:', err);
-                // On error, show idle state if we have no data
-                if (allCustomers.length === 0) {
-                    render();
-                    updateStats();
-                    document.getElementById('loading').style.display = 'none';
-                    document.getElementById('dashboard').style.display = 'grid';
-                }
-            }
-        }
-
-        function updateStats() {
-            const filtered = currentBarberId === 'hub' ? allCustomers : allCustomers.filter(c => c.barber_id === currentBarberId);
-            document.getElementById('totalActive').textContent = filtered.length;
-            document.getElementById('totalWaiting').textContent = filtered.filter(c => c.status === 'WAITING').length;
-            document.getElementById('totalInService').textContent = filtered.filter(c => c.status === 'IN_SERVICE').length;
-
-            // Average wait time
-            const waiting = filtered.filter(c => c.status === 'WAITING');
-            const avg = waiting.length > 0 ? Math.ceil(waiting.reduce((s, c) => s + (parseInt(c.service_duration) || 30), 0) / (currentBarberId === 'hub' ? 3 : 1)) : 0;
-            document.getElementById('avgWaitTime').textContent = `~${avg} min`;
-        }
-
-        function render() {
-            if (currentBarberId === 'hub') {
-                renderHub();
-            } else {
-                renderBarberQueue(currentBarberId);
-            }
-        }
-
-        function renderHub() {
-            const container = document.getElementById('mainContent');
-            document.getElementById('backBtn').style.display = 'none';
-            document.getElementById('dashboardTitle').textContent = '🪒 Barber Shop Hub';
-
-            if (allCustomers.length === 0) {
-                renderEmptyState(container, "All clear!", "No clients in any queue.");
-                return;
-            }
-
-            const cards = CONFIG.barbers.map(barber => {
-                const q = allCustomers.filter(c => c.barber_id === barber.id);
-                const wait = q.reduce((s, c) => s + (parseInt(c.service_duration) || 30), 0);
                 return `
-                    <div class="barber-hub-card" onclick="selectBarber('${barber.id}')">
-                        <div class="barber-avatar-large">${barber.avatar}</div>
-                        <div class="barber-hub-name">${barber.name}</div>
-                        <div class="wait-time-badge">${wait} min wait</div>
-                        <div style="color: #64748b; font-size: 13px;">${q.length} customers active</div>
+                    <div class="barber-option">
+                        <input type="radio" id="barber-${barber.id}" name="barber" value="${barber.id}" 
+                               ${barber.id === 'next_available' ? 'checked' : ''}>
+                        <label for="barber-${barber.id}" class="barber-card">
+                            <div class="barber-avatar" style="background: linear-gradient(135deg, ${barber.color}, ${barber.color}dd);">
+                                ${barber.avatar}
+                            </div>
+                            <div class="barber-name">${barber.name}</div>
+                            <div class="barber-wait">
+                                <span class="wait-indicator ${waitClass}"></span>
+                                ${waitText}
+                            </div>
+                        </label>
                     </div>
                 `;
             }).join('');
 
-            container.innerHTML = `<div class="barber-hub">${cards}</div>`;
+            grid.innerHTML = barbersHTML;
         }
 
-        function selectBarber(id) {
-            currentBarberId = id;
-            render();
-            updateStats();
+        // Get selected barber
+        function getSelectedBarber() {
+            const selected = document.querySelector('input[name="barber"]:checked');
+            return selected ? selected.value : 'next_available';
         }
 
-        function showHub() {
-            currentBarberId = 'hub';
-            render();
-            updateStats();
+        // Get service duration
+        function getServiceDuration() {
+            const selectedService = document.querySelector('input[name="service"]:checked');
+            return selectedService ? parseInt(selectedService.dataset.duration) : 40;
         }
 
-        function renderBarberQueue(id) {
-            const container = document.getElementById('mainContent');
-            const barber = CONFIG.barbers.find(b => b.id === id);
-            document.getElementById('backBtn').style.display = 'block';
-            document.getElementById('dashboardTitle').innerHTML = `<span style="filter: drop-shadow(0 0 12px var(--primary-glow))">💈 Queue: ${barber.name}</span>`;
+        // Handle form submission
+        document.getElementById('checkinForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
 
-            const q = allCustomers.filter(c => c.barber_id === id);
+            const errorMessage = document.getElementById('errorMessage');
+            const errorText = document.getElementById('errorText');
+            const submitBtn = document.getElementById('submitBtn');
+            const btnText = document.getElementById('btnText');
 
-            if (q.length === 0) {
-                renderEmptyState(container, `Ready for ${barber.name}!`, "Your chair is empty and waiting.");
-                return;
-            }
-
-            container.innerHTML = q.map((c, i) => `
-                <div class="queue-card" data-customer-id="${c.customer_id}">
-                    <div class="position-badge">#${i + 1}</div>
-                    <div class="customer-name">${c.name}</div>
-                    <div class="customer-details">
-                        <span class="detail-item">📱 ${c.phone}</span>
-                        <span class="detail-item">✂️ ${c.service}</span>
-                        <span class="status-badge status-${c.status.toLowerCase()}">${c.status}</span>
-                    </div>
-                    <div class="time-info">
-                        <span class="time-item">⏱️ ${c.service_duration}min</span>
-                        <span class="time-item">⏰ Waiting: ${Math.floor((new Date() - new Date(c.checkin_time)) / 60000)}m</span>
-                    </div>
-                    <div class="actions">
-                        ${c.status !== 'IN_SERVICE' ? `<button class="btn btn-start" onclick="updateStatus('${c.customer_id}', 'start')">▶️ Start</button>` : ''}
-                        <button class="btn btn-complete" onclick="updateStatus('${c.customer_id}', 'complete')">✅ Complete</button>
-                        <button class="btn btn-cancel" onclick="updateStatus('${c.customer_id}', 'cancel')">🚫 Cancel</button>
-                        <button class="btn btn-noshow" onclick="updateStatus('${c.customer_id}', 'noshow')">❌ No Show</button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function renderEmptyState(container, title, description) {
-            const quote = QUOTES[Math.floor(Math.random() * QUOTES.length)];
-            container.innerHTML = `
-                <div class="empty-state">
-                    <div class="empty-state-hero">
-                        <div class="empty-icon">✂️</div>
-                        <h2>${title}</h2>
-                        <p>${description}</p>
-                    </div>
-                    <div class="empty-state-content">
-                        <div class="time-display">
-                            <div class="time-card">
-                                <div id="currentTime" class="time-card-value">00:00</div>
-                                <div style="font-size: 12px; color: #64748b;">Current Time</div>
-                            </div>
-                            <div class="time-card">
-                                <div id="currentDate" class="time-card-value">Jan 2</div>
-                                <div style="font-size: 12px; color: #64748b;">Today's Date</div>
-                            </div>
-                        </div>
-                        <div class="ready-status">
-                            <div class="ready-dot"></div>
-                            <div class="ready-text">Barber Shop is Active & Ready</div>
-                        </div>
-                        <div style="background: rgba(99, 102, 241, 0.05); padding: 20px; border-radius: 12px; text-align: left;">
-                            <div style="font-style: italic; color: #475569;">"${quote.text}"</div>
-                            <div style="margin-top: 10px; font-weight: 700; color: var(--primary);">— ${quote.author}</div>
-                        </div>
-                    </div>
-                </div>
-            `;
-            updateClock();
-        }
-
-        async function updateStatus(customerId, action) {
-            // Optimistic UI: Immediately remove/update locally
-            const card = document.querySelector(`[data-customer-id="${customerId}"]`);
-            if (card) {
-                card.style.opacity = '0.5';
-                card.style.transform = 'scale(0.95)';
-                card.style.transition = 'all 0.3s ease';
-            }
-
-            // Also remove from local array for immediate re-render if needed
-            // But we'll just wait for the fade out to feel more natural
-            logActivity('System', `Processing ${action}...`, 'info');
-
-            const endpoints = {
-                'start': CONFIG.startServiceUrl,
-                'complete': CONFIG.completeServiceUrl,
-                'cancel': CONFIG.cancelUrl,
-                'noshow': CONFIG.noShowUrl
-            };
+            errorMessage.style.display = 'none';
+            submitBtn.disabled = true;
+            btnText.textContent = 'Joining Queue...';
 
             try {
-                // We fire and forget the UI update (optimistic)
-                // But we still wait for the fetch to trigger a background refresh
-                fetch(endpoints[action], {
+                const name = document.getElementById('name').value.trim();
+                const phone = normalizePhoneNumber(phoneInput.value);
+                const service = document.querySelector('input[name="service"]:checked').value;
+                const serviceDuration = getServiceDuration();
+                const barberId = getSelectedBarber();
+
+                if (!name || !phone || !service || !barberId) {
+                    throw new Error('Please fill in all required fields');
+                }
+
+                if (phone.length !== 10) {
+                    throw new Error('Please enter a valid 10-digit phone number');
+                }
+
+                const response = await fetch(CONFIG.checkinUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ customerId })
-                }).then(() => {
-                    // Small delay to let n8n process before we fetch the new state
-                    setTimeout(loadDashboard, 1000);
+                    body: JSON.stringify({
+                        name: name,
+                        phone: phone,
+                        service: service,
+                        service_duration: serviceDuration,
+                        barber_id: barberId
+                    })
                 });
 
-                // If it's a destructive action (complete/cancel/noshow), hide it now
-                if (action !== 'start') {
-                    if (card) {
-                        card.style.maxHeight = '0';
-                        card.style.margin = '0';
-                        card.style.padding = '0';
-                        card.style.overflow = 'hidden';
-                        card.style.opacity = '0';
-                        setTimeout(() => card.remove(), 400);
-                    }
+                if (response.ok) {
+                    const selectedBarberObj = CONFIG.barbers.find(b => b.id === barberId);
+                    document.getElementById('selectedBarberName').textContent = selectedBarberObj ? selectedBarberObj.name : 'your selected barber';
+                    document.getElementById('successOverlay').style.display = 'flex';
+                    document.body.style.overflow = 'hidden';
+                    document.getElementById('checkinForm').reset();
+
+                    // Re-render barbers with default selection
+                    await loadQueueData();
+                    renderBarbers();
                 } else {
-                    // Start service just updates status locally for now
-                    const badge = card.querySelector('.status-badge');
-                    if (badge) {
-                        badge.textContent = 'IN_SERVICE';
-                        badge.className = 'status-badge status-in_service';
-                    }
+                    const responseText = await response.text();
+                    throw new Error(`Server error: ${response.status} - ${responseText}`);
                 }
-            } catch (err) {
-                console.error(err);
-                if (card) {
-                    card.style.opacity = '1';
-                    card.style.transform = 'scale(1)';
-                }
+            } catch (error) {
+                console.error('Check-in error:', error);
+                errorText.textContent = `❌ ${error.message}`;
+                errorMessage.style.display = 'block';
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } finally {
+                submitBtn.disabled = false;
+                btnText.textContent = 'Join Queue';
             }
+        });
+
+        function resetForm() {
+            document.getElementById('successOverlay').style.display = 'none';
+            document.body.style.overflow = '';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        function updateClock() {
-            const now = new Date();
-            const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            const dateStr = now.toLocaleDateString([], { month: 'short', day: 'numeric' });
+        // Initialize with API limit optimizations
+        (async function init() {
+            try {
+                await loadQueueData();
+                renderBarbers();
 
-            const timeEl = document.getElementById('currentTime');
-            const dateEl = document.getElementById('currentDate');
-            if (timeEl) timeEl.textContent = timeStr;
-            if (dateEl) dateEl.textContent = dateStr;
-        }
+                // Visibility API support
+                document.addEventListener('visibilitychange', () => {
+                    if (!document.hidden) {
+                        loadQueueData().then(renderBarbers);
+                    }
+                });
 
-        function logActivity(user, text, type) {
-            const feed = document.getElementById('activityFeed');
-            const item = document.createElement('div');
-            item.className = 'activity-item';
-            item.innerHTML = `<strong>${user}</strong> ${text}`;
-            feed.prepend(item);
-            if (feed.children.length > 5) feed.lastElementChild.remove();
-        }
-
-        function rotateTip() {
-            const tip = TIPS[Math.floor(Math.random() * TIPS.length)];
-            document.getElementById('quickTip').textContent = `"${tip}"`;
-        }
-
-        init();
+                // Periodic refresh
+                setInterval(async () => {
+                    await loadQueueData();
+                    renderBarbers();
+                }, 90000); // 90s optimization
+            } catch (err) {
+                console.error("Init error:", err);
+            }
+        })();
     </script>
 </body>
 
