@@ -664,6 +664,35 @@
                 max-height: 400px;
             }
         }
+
+        /* Disclaimer Notice */
+        .disclaimer-notice {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 16px;
+            background: rgba(251, 191, 36, 0.1);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .disclaimer-icon {
+            font-size: 20px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .disclaimer-notice p {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        .disclaimer-notice strong {
+            color: #fbbf24;
+        }
     </style>
 </head>
 
@@ -833,6 +862,13 @@
                             </div>
                         </div>
                     </div>
+                </div>
+
+                <!-- Wait Time Disclaimer -->
+                <div class="disclaimer-notice">
+                    <span class="disclaimer-icon">ℹ️</span>
+                    <p>All wait times are <strong>estimates only</strong> and are not guaranteed. Actual wait times may
+                        vary based on service complexity, walk-ins, and other factors.</p>
                 </div>
 
                 <button type="submit" class="btn btn-primary" id="submitBtn">
