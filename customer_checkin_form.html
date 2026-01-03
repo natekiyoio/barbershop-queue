@@ -1034,10 +1034,20 @@
             ACCESS_TOKEN: 'barber_qr_2024', // Token required in URL ?token=xxx
             SESSION_KEY: 'checkin_access_granted',
             SESSION_TIME_KEY: 'checkin_access_time',
-            SESSION_TIMEOUT: 3 * 60 * 1000  // 3 minutes
+            SESSION_TIMEOUT: 3 * 60 * 1000,  // 3 minutes in milliseconds
+
+            // ============================================
+            // GEOLOCATION SETTINGS
+            // Set your shop's coordinates below (use Google Maps to find them)
+            // ============================================
+            GEOLOCATION_ENABLED: true,      // Set to false to disable location check
+            SHOP_LATITUDE: 51.102640,             // REPLACE with your shop's latitude
+            SHOP_LONGITUDE: -113.935633,            // REPLACE with your shop's longitude  
+            MAX_DISTANCE_METERS: 100        // How close user must be (in meters)
         };
 
         let sessionTimeoutId = null;
+        let locationVerified = false;
 
         // ============================================
         // ACCESS VALIDATION
@@ -1144,12 +1154,174 @@
             document.querySelector('.container').style.display = 'block';
         }
 
-        // Check access on page load
-        if (validateAccess()) {
-            showCheckinForm();
-        } else {
+        // ============================================
+        // GEOLOCATION FUNCTIONS
+        // ============================================
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            // Haversine formula to calculate distance between two coordinates
+            const R = 6371e3; // Earth's radius in meters
+            const φ1 = lat1 * Math.PI / 180;
+            const φ2 = lat2 * Math.PI / 180;
+            const Δφ = (lat2 - lat1) * Math.PI / 180;
+            const Δλ = (lon2 - lon1) * Math.PI / 180;
+
+            const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+                Math.cos(φ1) * Math.cos(φ2) *
+                Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+            return R * c; // Distance in meters
+        }
+
+        function showLocationError(errorType) {
+            const restrictedCard = document.querySelector('.restricted-card');
+            let icon, title, message;
+
+            switch (errorType) {
+                case 'too_far':
+                    icon = '📍';
+                    title = 'Not at Shop Location';
+                    message = 'You must be at our shop to check in. Please visit us in person and scan the QR code.';
+                    break;
+                case 'denied':
+                    icon = '🚫';
+                    title = 'Location Access Required';
+                    message = 'Please allow location access to verify you are at our shop. This is required for security.';
+                    break;
+                case 'unavailable':
+                    icon = '📡';
+                    title = 'Location Unavailable';
+                    message = 'We couldn\'t determine your location. Please ensure location services are enabled and try again.';
+                    break;
+                default:
+                    icon = '❌';
+                    title = 'Location Error';
+                    message = 'There was a problem verifying your location. Please try again.';
+            }
+
+            if (restrictedCard) {
+                restrictedCard.innerHTML = `
+                    <div class="restricted-icon">${icon}</div>
+                    <h1 class="restricted-title">${title}</h1>
+                    <p class="restricted-message">${message}</p>
+                    
+                    <div class="restricted-instructions">
+                        <div class="instruction-step">
+                            <div class="step-number">1</div>
+                            <div class="step-text">Visit our shop in person</div>
+                        </div>
+                        <div class="instruction-step">
+                            <div class="step-number">2</div>
+                            <div class="step-text">Enable location services on your device</div>
+                        </div>
+                        <div class="instruction-step">
+                            <div class="step-number">3</div>
+                            <div class="step-text">Scan the QR code at the entrance</div>
+                        </div>
+                    </div>
+                    
+                    <div class="qr-hint" style="margin-top: 20px;">
+                        <p>📱 Check-in is only available at our shop location</p>
+                    </div>
+                `;
+            }
             showRestrictedScreen();
         }
+
+        function showLocationChecking() {
+            const restrictedCard = document.querySelector('.restricted-card');
+            if (restrictedCard) {
+                restrictedCard.innerHTML = `
+                    <div class="restricted-icon" style="animation: pulse 1.5s infinite;">📍</div>
+                    <h1 class="restricted-title" style="color: var(--primary);">Verifying Location</h1>
+                    <p class="restricted-message">
+                        Please allow location access when prompted...
+                    </p>
+                    <div style="margin-top: 20px;">
+                        <div class="loading-spinner-small" style="margin: 0 auto;"></div>
+                    </div>
+                `;
+            }
+            showRestrictedScreen();
+        }
+
+        async function verifyLocation() {
+            return new Promise((resolve) => {
+                if (!SECURITY.GEOLOCATION_ENABLED) {
+                    resolve(true);
+                    return;
+                }
+
+                // Check if coordinates are configured
+                if (SECURITY.SHOP_LATITUDE === 0.0 && SECURITY.SHOP_LONGITUDE === 0.0) {
+                    console.warn('Shop coordinates not configured. Skipping location check.');
+                    resolve(true);
+                    return;
+                }
+
+                if (!navigator.geolocation) {
+                    showLocationError('unavailable');
+                    resolve(false);
+                    return;
+                }
+
+                showLocationChecking();
+
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const distance = calculateDistance(
+                            position.coords.latitude,
+                            position.coords.longitude,
+                            SECURITY.SHOP_LATITUDE,
+                            SECURITY.SHOP_LONGITUDE
+                        );
+
+                        console.log(`Distance from shop: ${Math.round(distance)} meters`);
+
+                        if (distance <= SECURITY.MAX_DISTANCE_METERS) {
+                            locationVerified = true;
+                            resolve(true);
+                        } else {
+                            showLocationError('too_far');
+                            resolve(false);
+                        }
+                    },
+                    (error) => {
+                        if (error.code === error.PERMISSION_DENIED) {
+                            showLocationError('denied');
+                        } else {
+                            showLocationError('unavailable');
+                        }
+                        resolve(false);
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 60000
+                    }
+                );
+            });
+        }
+
+        // ============================================
+        // INITIALIZE ACCESS CHECK
+        // ============================================
+        async function initializeAccess() {
+            // First check token
+            if (!validateAccess()) {
+                showRestrictedScreen();
+                return;
+            }
+
+            // Then check location
+            const locationOk = await verifyLocation();
+            if (locationOk) {
+                showCheckinForm();
+            }
+        }
+
+        // Start access check
+        initializeAccess();
 
         // ============================================
         // CONFIGURATION
