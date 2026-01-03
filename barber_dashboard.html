@@ -849,6 +849,194 @@
             cursor: not-allowed;
             opacity: 0.6;
         }
+
+        /* Login Screen Styles */
+        .login-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            padding: 20px;
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(25px);
+            border-radius: 28px;
+            padding: 50px 40px;
+            max-width: 420px;
+            width: 100%;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            animation: slideUp 0.6s ease-out;
+            text-align: center;
+        }
+
+        .login-icon {
+            font-size: 80px;
+            margin-bottom: 25px;
+            filter: drop-shadow(0 0 20px var(--primary-glow));
+            animation: bounce 3s ease-in-out infinite;
+        }
+
+        .login-title {
+            font-size: 32px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            letter-spacing: -1px;
+        }
+
+        .login-subtitle {
+            color: var(--text-muted);
+            font-size: 15px;
+            margin-bottom: 35px;
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .password-input-wrapper {
+            position: relative;
+        }
+
+        .password-input {
+            width: 100%;
+            padding: 18px 50px 18px 20px;
+            border: 2px solid var(--glass-border);
+            border-radius: 14px;
+            font-size: 16px;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+            text-align: center;
+            letter-spacing: 3px;
+        }
+
+        .password-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px var(--primary-glow);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .password-input::placeholder {
+            letter-spacing: 1px;
+            color: var(--text-muted);
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: opacity 0.3s;
+        }
+
+        .toggle-password:hover {
+            opacity: 1;
+        }
+
+        .btn-login {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            border: none;
+            padding: 18px;
+            border-radius: 14px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 25px var(--primary-glow);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .btn-login:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 0 40px var(--primary-glow);
+        }
+
+        .btn-login:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .login-error {
+            background: rgba(248, 113, 113, 0.15);
+            border: 1px solid rgba(248, 113, 113, 0.3);
+            color: #f87171;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            display: none;
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            20%,
+            60% {
+                transform: translateX(-8px);
+            }
+
+            40%,
+            80% {
+                transform: translateX(8px);
+            }
+        }
+
+        .login-footer {
+            margin-top: 30px;
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        .login-footer span {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .logout-btn {
+            background: rgba(248, 113, 113, 0.1);
+            color: #f87171;
+            border: 1px solid rgba(248, 113, 113, 0.3);
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-left: 15px;
+        }
+
+        .logout-btn:hover {
+            background: rgba(248, 113, 113, 0.2);
+            transform: translateY(-2px);
+        }
     </style>
 </head>
 
@@ -858,6 +1046,32 @@
         <div class="blob blob-2"></div>
         <div class="blob blob-3"></div>
     </div>
+
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-screen">
+        <div class="login-card">
+            <div class="login-icon">💈</div>
+            <h1 class="login-title">Barber Dashboard</h1>
+            <p class="login-subtitle">Enter your access code to continue</p>
+
+            <form id="loginForm" class="login-form">
+                <div id="loginError" class="login-error">Incorrect password. Please try again.</div>
+
+                <div class="password-input-wrapper">
+                    <input type="password" id="passwordInput" class="password-input" placeholder="Enter Password"
+                        autocomplete="off" required>
+                    <button type="button" class="toggle-password" onclick="togglePassword()" tabindex="-1">👁️</button>
+                </div>
+
+                <button type="submit" class="btn-login" id="loginBtn">Access Dashboard</button>
+            </form>
+
+            <div class="login-footer">
+                🔒 Protected access for <span>authorized barbers only</span>
+            </div>
+        </div>
+    </div>
+
     <div id="toast-container" class="toast-container"></div>
     <div class="container">
         <div id="loading" class="loading">
@@ -870,6 +1084,7 @@
                 <div>
                     <button id="backBtn" class="back-btn" onclick="showHub()">← Back to Hub</button>
                     <h1 id="dashboardTitle">Queue Dashboard</h1>
+                    <button class="logout-btn" onclick="logout()">🚪 Logout</button>
                 </div>
                 <div class="stats">
                     <div class="stat">
@@ -922,6 +1137,110 @@
     </div>
 
     <script>
+        // ============================================
+        // AUTHENTICATION CONFIGURATION
+        // Change this password to your desired value
+        // ============================================
+        const AUTH_CONFIG = {
+            password: 'barber2024',           // Change this to your password
+            sessionDuration: 8 * 60 * 60 * 1000  // 8 hours in milliseconds
+        };
+
+        // ============================================
+        // AUTHENTICATION FUNCTIONS
+        // ============================================
+        function checkAuth() {
+            const authenticated = sessionStorage.getItem('barber_authenticated');
+            const authTime = sessionStorage.getItem('auth_time');
+
+            if (authenticated === 'true' && authTime) {
+                const elapsed = Date.now() - parseInt(authTime);
+                if (elapsed < AUTH_CONFIG.sessionDuration) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        function showLoginScreen() {
+            document.getElementById('loginScreen').style.display = 'flex';
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'none';
+        }
+
+        function hideLoginScreen() {
+            document.getElementById('loginScreen').style.display = 'none';
+        }
+
+        function togglePassword() {
+            const input = document.getElementById('passwordInput');
+            const btn = document.querySelector('.toggle-password');
+            if (input.type === 'password') {
+                input.type = 'text';
+                btn.textContent = '🙈';
+            } else {
+                input.type = 'password';
+                btn.textContent = '👁️';
+            }
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const password = document.getElementById('passwordInput').value;
+            const errorEl = document.getElementById('loginError');
+            const loginBtn = document.getElementById('loginBtn');
+
+            loginBtn.disabled = true;
+            loginBtn.textContent = 'Verifying...';
+
+            // Small delay for UX
+            setTimeout(() => {
+                if (password === AUTH_CONFIG.password) {
+                    // Success - save session
+                    sessionStorage.setItem('barber_authenticated', 'true');
+                    sessionStorage.setItem('auth_time', Date.now().toString());
+
+                    errorEl.style.display = 'none';
+                    hideLoginScreen();
+                    initDashboard();
+                } else {
+                    // Wrong password
+                    errorEl.style.display = 'block';
+                    document.getElementById('passwordInput').value = '';
+                    document.getElementById('passwordInput').focus();
+
+                    // Reset animation
+                    errorEl.style.animation = 'none';
+                    errorEl.offsetHeight; // Trigger reflow
+                    errorEl.style.animation = 'shake 0.5s ease-in-out';
+                }
+
+                loginBtn.disabled = false;
+                loginBtn.textContent = 'Access Dashboard';
+            }, 500);
+        }
+
+        function logout() {
+            sessionStorage.removeItem('barber_authenticated');
+            sessionStorage.removeItem('auth_time');
+            showLoginScreen();
+            document.getElementById('passwordInput').value = '';
+            document.getElementById('loginError').style.display = 'none';
+        }
+
+        // Setup login form listener
+        document.getElementById('loginForm').addEventListener('submit', handleLogin);
+
+        // Check authentication on page load
+        if (checkAuth()) {
+            hideLoginScreen();
+        } else {
+            showLoginScreen();
+        }
+
+        // ============================================
+        // DASHBOARD CONFIGURATION
+        // ============================================
         const CONFIG = {
             dashboardUrl: 'https://n8n.srv1146840.hstgr.cloud/webhook/api/queue',
             startServiceUrl: 'https://n8n.srv1146840.hstgr.cloud/webhook/start-service',
@@ -953,8 +1272,9 @@
         let currentBarberId = 'hub';
         let notifiedCustomers = new Set(); // Track customers who have been notified
 
-        // Initialize with API limit optimizations
-        async function init() {
+        // Initialize dashboard (called after successful login)
+        async function initDashboard() {
+            document.getElementById('loading').style.display = 'block';
             await loadDashboard();
             updateClock();
             setInterval(updateClock, 1000);
@@ -1260,7 +1580,10 @@
             document.getElementById('quickTip').textContent = `"${tip}"`;
         }
 
-        init();
+        // Auto-init if already authenticated
+        if (checkAuth()) {
+            initDashboard();
+        }
     </script>
 </body>
 
