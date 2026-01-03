@@ -703,13 +703,36 @@
         let allCustomers = [];
         let currentBarberId = 'hub';
 
-        // Initialize
+        // Initialize with API limit optimizations
         async function init() {
             await loadDashboard();
             updateClock();
             setInterval(updateClock, 1000);
             rotateTip();
             setInterval(rotateTip, 10000);
+
+            let refreshInterval;
+
+            function startRefreshing() {
+                if (refreshInterval) clearInterval(refreshInterval);
+                refreshInterval = setInterval(loadDashboard, 45000); // 45s for API limit optimization
+            }
+
+            function stopRefreshing() {
+                if (refreshInterval) clearInterval(refreshInterval);
+            }
+
+            // Page Visibility API - Stop refreshing when tab is hidden
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden) {
+                    stopRefreshing();
+                } else {
+                    loadDashboard(); // Refresh immediately when returning
+                    startRefreshing();
+                }
+            });
+
+            startRefreshing();
         }
 
         async function loadDashboard() {
