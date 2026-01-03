@@ -1034,7 +1034,7 @@
             ACCESS_TOKEN: 'barber_qr_2024', // Token required in URL ?token=xxx
             SESSION_KEY: 'checkin_access_granted',
             SESSION_TIME_KEY: 'checkin_access_time',
-            SESSION_TIMEOUT: 3 * 60 * 1000 // 3 minutes in milliseconds
+            SESSION_TIMEOUT: 30 * 1000  // 30 seconds for testing
         };
 
         let sessionTimeoutId = null;
@@ -1098,6 +1098,13 @@
         }
 
         function showSessionExpiredScreen() {
+            // Disable all form inputs immediately
+            const form = document.getElementById('checkinForm');
+            if (form) {
+                const inputs = form.querySelectorAll('input, button, select');
+                inputs.forEach(input => input.disabled = true);
+            }
+
             // Update the restricted message for expired sessions
             const restrictedCard = document.querySelector('.restricted-card');
             if (restrictedCard) {
