@@ -1031,9 +1031,13 @@
         // Change this token to match your QR code
         // ============================================
         const SECURITY = {
-            ACCESS_TOKEN: 'barber_qr_2024',  // Token required in URL ?token=xxx
-            SESSION_KEY: 'checkin_access_granted'
+            ACCESS_TOKEN: 'barber_qr_2024', // Token required in URL ?token=xxx
+            SESSION_KEY: 'checkin_access_granted',
+            SESSION_TIME_KEY: 'checkin_access_time',
+            SESSION_TIMEOUT: 3 * 60 * 1000 // 3 minutes in milliseconds
         };
+
+        let sessionTimeoutId = null;
 
         // ============================================
         // ACCESS VALIDATION
@@ -1045,19 +1049,82 @@
 
             // Check session for previously granted access
             const sessionAccess = sessionStorage.getItem(SECURITY.SESSION_KEY);
+            const sessionTime = sessionStorage.getItem(SECURITY.SESSION_TIME_KEY);
 
             if (urlToken === SECURITY.ACCESS_TOKEN) {
                 // Valid token in URL, grant session access
                 sessionStorage.setItem(SECURITY.SESSION_KEY, 'true');
+                sessionStorage.setItem(SECURITY.SESSION_TIME_KEY, Date.now().toString());
                 // Clean up URL (remove token for cleaner look)
                 window.history.replaceState({}, document.title, window.location.pathname);
+                startSessionTimer();
                 return true;
-            } else if (sessionAccess === 'true') {
-                // Already have session access
-                return true;
+            } else if (sessionAccess === 'true' && sessionTime) {
+                // Check if session is still valid (within timeout)
+                const elapsed = Date.now() - parseInt(sessionTime);
+                if (elapsed < SECURITY.SESSION_TIMEOUT) {
+                    startSessionTimer(SECURITY.SESSION_TIMEOUT - elapsed);
+                    return true;
+                } else {
+                    // Session expired
+                    clearSession();
+                    return false;
+                }
             }
 
             return false;
+        }
+
+        function startSessionTimer(remainingTime = SECURITY.SESSION_TIMEOUT) {
+            // Clear any existing timer
+            if (sessionTimeoutId) {
+                clearTimeout(sessionTimeoutId);
+            }
+
+            // Set timer to lock the form
+            sessionTimeoutId = setTimeout(() => {
+                clearSession();
+                showSessionExpiredScreen();
+            }, remainingTime);
+        }
+
+        function clearSession() {
+            sessionStorage.removeItem(SECURITY.SESSION_KEY);
+            sessionStorage.removeItem(SECURITY.SESSION_TIME_KEY);
+            if (sessionTimeoutId) {
+                clearTimeout(sessionTimeoutId);
+                sessionTimeoutId = null;
+            }
+        }
+
+        function showSessionExpiredScreen() {
+            // Update the restricted message for expired sessions
+            const restrictedCard = document.querySelector('.restricted-card');
+            if (restrictedCard) {
+                restrictedCard.innerHTML = `
+                    <div class="restricted-icon">⏱️</div>
+                    <h1 class="restricted-title">Session Expired</h1>
+                    <p class="restricted-message">
+                        Your check-in session has timed out for security reasons.
+                    </p>
+                    
+                    <div class="restricted-instructions">
+                        <div class="instruction-step">
+                            <div class="step-number">1</div>
+                            <div class="step-text">Scan the QR code at the entrance again</div>
+                        </div>
+                        <div class="instruction-step">
+                            <div class="step-number">2</div>
+                            <div class="step-text">Complete your check-in within 3 minutes</div>
+                        </div>
+                    </div>
+                    
+                    <div class="qr-hint">
+                        <p>📱 Please scan the QR code to continue</p>
+                    </div>
+                `;
+            }
+            showRestrictedScreen();
         }
 
         function showRestrictedScreen() {
@@ -1109,19 +1176,14 @@
 
         function formatPhoneDisplay(digits) {
             if (digits.length === 0) return '';
-            if (digits.length <= 3) return digits;
-            if (digits.length <= 6) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
-            return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6, 10)}`;
+            if (digits.length <= 3) return digits; if (digits.length <= 6) return `(${digits.slice(0, 3)})
+            ${digits.slice(3)}`; return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6, 10)}`;
         }
-
         function handlePhoneInput(e) {
-            const digits = normalizePhoneNumber(e.target.value);
-            const formatted = formatPhoneDisplay(digits);
-            e.target.value = formatted;
-        }
-
-        phoneInput.addEventListener('input', handlePhoneInput);
-        phoneInput.addEventListener('paste', (e) => setTimeout(() => handlePhoneInput(e), 0));
+            const digits = normalizePhoneNumber(e.target.value); const
+                formatted = formatPhoneDisplay(digits); e.target.value = formatted;
+        } phoneInput.addEventListener('input',
+            handlePhoneInput); phoneInput.addEventListener('paste', (e) => setTimeout(() => handlePhoneInput(e), 0));
         phoneInput.addEventListener('change', handlePhoneInput);
 
         // Load queue data and calculate wait times
@@ -1181,32 +1243,26 @@
                     waitText = 'Auto-assign';
                 } else if (waitTime === 0) {
                     waitText = 'No wait';
-                } else if (waitTime < 30) {
-                    waitClass = 'wait-low';
-                    waitText = `~${waitTime} min`;
-                } else if (waitTime < 60) {
-                    waitClass = 'wait-medium';
-                    waitText = `~${waitTime} min`;
+                } else if (waitTime < 30) { waitClass = 'wait-low'; waitText = `~${waitTime} min`; } else if (waitTime < 60) {
+                    waitClass = 'wait-medium'; waitText = `~${waitTime} min`;
                 } else {
                     waitClass = 'wait-high';
                     waitText = `~${Math.ceil(waitTime / 60)} hr`;
-                }
-
-                return `
-                    <div class="barber-option">
-                        <input type="radio" id="barber-${barber.id}" name="barber" value="${barber.id}" 
-                               ${barber.id === 'next_available' ? 'checked' : ''}>
-                        <label for="barber-${barber.id}" class="barber-card">
-                            <div class="barber-avatar" style="background: linear-gradient(135deg, ${barber.color}, ${barber.color}dd);">
-                                ${barber.avatar}
-                            </div>
-                            <div class="barber-name">${barber.name}</div>
-                            <div class="barber-wait">
-                                <span class="wait-indicator ${waitClass}"></span>
-                                ${waitText}
-                            </div>
-                        </label>
+                } return ` <div class="barber-option">
+                <input type="radio" id="barber-${barber.id}" name="barber" value="${barber.id}"
+                    ${barber.id === 'next_available' ? 'checked' : ''}>
+                <label for="barber-${barber.id}" class="barber-card">
+                    <div class="barber-avatar"
+                        style="background: linear-gradient(135deg, ${barber.color}, ${barber.color}dd);">
+                        ${barber.avatar}
                     </div>
+                    <div class="barber-name">${barber.name}</div>
+                    <div class="barber-wait">
+                        <span class="wait-indicator ${waitClass}"></span>
+                        ${waitText}
+                    </div>
+                </label>
+                </div>
                 `;
             }).join('');
 
@@ -1267,7 +1323,8 @@
 
                 if (response.ok) {
                     const selectedBarberObj = CONFIG.barbers.find(b => b.id === barberId);
-                    document.getElementById('selectedBarberName').textContent = selectedBarberObj ? selectedBarberObj.name : 'your selected barber';
+                    document.getElementById('selectedBarberName').textContent = selectedBarberObj ? selectedBarberObj.name :
+                        'your selected barber';
                     document.getElementById('successOverlay').style.display = 'flex';
                     document.body.style.overflow = 'hidden';
                     document.getElementById('checkinForm').reset();
