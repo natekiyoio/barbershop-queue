@@ -16,22 +16,19 @@
         }
 
         :root {
-            --primary: #6366f1;
-            --primary-dark: #4f46e5;
-            --secondary: #8b5cf6;
-            --success: #10b981;
-            --success-dark: #059669;
-            --danger: #ef4444;
-            --danger-dark: #dc2626;
-            --warning: #f59e0b;
-            --warning-dark: #d97706;
-            --info: #3b82f6;
-            --info-dark: #2563eb;
-            --bg-gradient-start: #1e1b4b;
-            --bg-gradient-end: #312e81;
-            --glass-bg: rgba(255, 255, 255, 0.1);
-            --glass-border: rgba(255, 255, 255, 0.2);
-            --card-bg: rgba(255, 255, 255, 0.95);
+            --primary: #818cf8;
+            --primary-glow: rgba(129, 140, 248, 0.5);
+            --secondary: #a78bfa;
+            --secondary-glow: rgba(167, 139, 250, 0.5);
+            --success: #34d399;
+            --danger: #f87171;
+            --warning: #fbbf24;
+            --info: #60a5fa;
+            --text-main: #f8fafc;
+            --text-muted: #cbd5e1;
+            --bg-dark: #0c0a2e;
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.15);
         }
 
         body {
@@ -197,7 +194,8 @@
         }
 
         .container {
-            max-width: 1400px;
+            width: 100%;
+            max-width: 1200px;
             margin: 0 auto;
             position: relative;
             z-index: 1;
@@ -228,9 +226,11 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            font-size: 36px;
+            font-size: clamp(32px, 5vw, 48px);
             font-weight: 800;
-            letter-spacing: -1px;
+            letter-spacing: -1.5px;
+            filter: drop-shadow(0 0 15px var(--primary-glow));
+            text-align: center;
         }
 
         .stats {
@@ -264,7 +264,7 @@
         }
 
         .stat-label {
-            color: #64748b;
+            color: var(--text-muted);
             font-size: 14px;
             font-weight: 600;
             text-transform: uppercase;
@@ -301,17 +301,30 @@
         .btn-refresh {
             background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             color: white;
+            padding: 18px 36px;
+            font-size: 18px;
+            border-radius: 16px;
+            box-shadow: 0 0 20px var(--primary-glow);
         }
 
         .btn-refresh:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 0 30px var(--primary-glow);
         }
 
         .btn-hub {
-            background: white;
-            color: var(--primary);
-            border: 1px solid var(--primary);
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 2px solid var(--primary);
+            padding: 14px 28px;
+            font-size: 16px;
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        .btn-back-main {
+            font-size: 20px;
+            padding: 16px 32px;
+            margin-bottom: 20px;
         }
 
         /* Barber Hub Grid */
@@ -340,47 +353,49 @@
         }
 
         .barber-avatar-large {
-            width: 80px;
-            height: 80px;
+            width: 120px;
+            height: 120px;
             border-radius: 50%;
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 40px;
-            margin: 0 auto 20px;
-            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
+            font-size: 60px;
+            margin: 0 auto 25px;
+            box-shadow: 0 0 30px var(--primary-glow);
+            border: 3px solid rgba(255, 255, 255, 0.2);
         }
 
         .barber-hub-name {
-            font-size: 24px;
-            font-weight: 700;
-            color: #1e293b;
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--text-main);
             margin-bottom: 10px;
+            text-shadow: 0 0 10px var(--primary-glow);
         }
 
         .wait-time-badge {
             display: inline-block;
             padding: 8px 16px;
-            background: rgba(16, 185, 129, 0.1);
-            color: #10b981;
+            background: rgba(52, 211, 153, 0.15);
+            color: var(--success);
             border-radius: 12px;
             font-weight: 700;
             font-size: 14px;
             margin-bottom: 15px;
+            border: 1px solid rgba(52, 211, 153, 0.3);
         }
 
-        /* Queue Cards */
         .queue-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(25px);
             border-radius: 20px;
             padding: 30px;
-            margin-bottom: 20px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            margin-bottom: 25px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
             position: relative;
             overflow: hidden;
             animation: slideUp 0.6s ease-out backwards;
@@ -416,10 +431,11 @@
         }
 
         .customer-name {
-            font-size: 24px;
-            font-weight: 700;
-            color: #1e293b;
-            margin-bottom: 10px;
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--text-main);
+            margin-bottom: 15px;
+            text-shadow: 0 0 8px var(--primary-glow);
         }
 
         .customer-details {
@@ -432,14 +448,14 @@
         .detail-item {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            padding: 8px 14px;
-            background: rgba(99, 102, 241, 0.1);
-            border-radius: 10px;
-            font-size: 14px;
-            font-weight: 500;
-            color: #475569;
-            border: 1px solid rgba(99, 102, 241, 0.2);
+            gap: 8px;
+            padding: 10px 18px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-muted);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .status-badge {
@@ -491,23 +507,35 @@
         }
 
         .btn-start {
-            background: linear-gradient(135deg, var(--success), var(--success-dark));
+            background: var(--success);
             color: white;
+            box-shadow: 0 0 15px rgba(52, 211, 153, 0.4);
+            font-size: 16px;
+            padding: 14px 24px;
         }
 
         .btn-complete {
-            background: linear-gradient(135deg, var(--info), var(--info-dark));
+            background: var(--info);
             color: white;
+            box-shadow: 0 0 15px rgba(96, 165, 250, 0.4);
+            font-size: 16px;
+            padding: 14px 24px;
         }
 
         .btn-cancel {
-            background: linear-gradient(135deg, var(--warning), var(--warning-dark));
+            background: var(--warning);
             color: white;
+            box-shadow: 0 0 15px rgba(251, 191, 36, 0.4);
+            font-size: 16px;
+            padding: 14px 24px;
         }
 
         .btn-noshow {
-            background: linear-gradient(135deg, var(--danger), var(--danger-dark));
+            background: var(--danger);
             color: white;
+            box-shadow: 0 0 15px rgba(248, 113, 113, 0.4);
+            font-size: 16px;
+            padding: 14px 24px;
         }
 
         /* Empty State */
@@ -894,7 +922,7 @@
             const container = document.getElementById('mainContent');
             const barber = CONFIG.barbers.find(b => b.id === id);
             document.getElementById('backBtn').style.display = 'block';
-            document.getElementById('dashboardTitle').textContent = `Queue: ${barber.name}`;
+            document.getElementById('dashboardTitle').innerHTML = `<span style="filter: drop-shadow(0 0 12px var(--primary-glow))">💈 Queue: ${barber.name}</span>`;
 
             const q = allCustomers.filter(c => c.barber_id === id);
 
