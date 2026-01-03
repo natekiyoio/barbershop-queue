@@ -1002,16 +1002,36 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // Initialize
+        // Initialize with API limit optimizations
         (async function init() {
             await loadQueueData();
             renderBarbers();
 
-            // Refresh wait times every 30 seconds
-            setInterval(async () => {
-                await loadQueueData();
-                renderBarbers();
-            }, 30000);
+            let refreshInterval;
+
+            function startRefreshing() {
+                if (refreshInterval) clearInterval(refreshInterval);
+                refreshInterval = setInterval(async () => {
+                    await loadQueueData();
+                    renderBarbers();
+                }, 90000); // Increased to 90s for API limit optimization
+            }
+
+            function stopRefreshing() {
+                if (refreshInterval) clearInterval(refreshInterval);
+            }
+
+            // Page Visibility API - Stop refreshing when tab is hidden
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden) {
+                    stopRefreshing();
+                } else {
+                    loadQueueData().then(renderBarbers); // Refresh immediately when returning
+                    startRefreshing();
+                }
+            });
+
+            startRefreshing();
         })();
     </script>
 </body>
