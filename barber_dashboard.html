@@ -41,6 +41,8 @@
             position: relative;
             overflow-x: hidden;
             display: flex;
+            min-height: 100vh;
+            align-items: center;
             justify-content: center;
         }
 
@@ -272,7 +274,7 @@
         }
 
         .stat-label {
-            color: var(--text-muted);
+            color: rgba(255, 255, 255, 0.9);
             font-size: 14px;
             font-weight: 600;
             text-transform: uppercase;
@@ -520,7 +522,7 @@
             border-radius: 8px;
             font-size: 13px;
             font-weight: 500;
-            color: #475569;
+            color: #ffffff;
         }
 
         .actions {
@@ -590,10 +592,16 @@
         }
 
         .empty-state p {
-            color: var(--text-muted);
+            color: rgba(255, 255, 255, 0.9);
             font-size: 18px;
             margin-bottom: 40px;
             font-weight: 500;
+        }
+
+        .time-label {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 600;
         }
 
         .time-display {
@@ -715,13 +723,22 @@
         .back-btn {
             display: none;
             cursor: pointer;
-            padding: 8px 16px;
-            background: rgba(99, 102, 241, 0.1);
-            color: var(--primary);
-            border-radius: 8px;
-            font-weight: 600;
-            margin-bottom: 10px;
-            border: none;
+            padding: 12px 24px;
+            background: rgba(99, 102, 241, 0.2);
+            color: white;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 16px;
+            margin-bottom: 15px;
+            border: 1px solid var(--primary);
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: var(--primary);
+            box-shadow: 0 0 25px var(--primary-glow);
+            transform: translateY(-2px);
         }
     </style>
 </head>
@@ -742,7 +759,7 @@
             <div class="header">
                 <div>
                     <button id="backBtn" class="back-btn" onclick="showHub()">← Back to Hub</button>
-                    <h1 id="dashboardTitle"><span class="header-icon">🪒</span>Queue Dashboard</h1>
+                    <h1 id="dashboardTitle">Queue Dashboard</h1>
                 </div>
                 <div class="stats">
                     <div class="stat">
@@ -912,7 +929,7 @@
         function renderHub() {
             const container = document.getElementById('mainContent');
             document.getElementById('backBtn').style.display = 'none';
-            document.getElementById('dashboardTitle').innerHTML = '<span class="header-icon">🪒</span>Barber Shop Hub';
+            document.getElementById('dashboardTitle').innerHTML = 'Barber Shop Hub';
 
             if (allCustomers.length === 0) {
                 renderEmptyState(container, "All clear!", "No clients in any queue.");
@@ -997,11 +1014,11 @@
                         <div class="time-display">
                             <div class="time-card">
                                 <div id="currentTime" class="time-card-value">00:00</div>
-                                <div style="font-size: 13px; color: var(--text-muted); font-weight: 600;">Current Time</div>
+                                <div class="time-label">Current Time</div>
                             </div>
                             <div class="time-card">
                                 <div id="currentDate" class="time-card-value">Jan 2</div>
-                                <div style="font-size: 13px; color: var(--text-muted); font-weight: 600;">Today's Date</div>
+                                <div class="time-label">Today's Date</div>
                             </div>
                         </div>
 
@@ -1010,7 +1027,7 @@
                         </div>
 
                         <div style="background: rgba(255, 255, 255, 0.03); padding: 25px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); text-align: left;">
-                            <div style="font-style: italic; color: var(--text-muted); font-size: 16px; line-height: 1.6;">"${quote.text}"</div>
+                            <div style="font-style: italic; color: rgba(255, 255, 255, 0.9); font-size: 16px; line-height: 1.6;">"${quote.text}"</div>
                             <div style="margin-top: 15px; font-weight: 700; color: var(--primary); font-size: 14px; text-transform: uppercase; letter-spacing: 1px;">— ${quote.author}</div>
                         </div>
                     </div>
