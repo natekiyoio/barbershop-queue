@@ -62,7 +62,7 @@ const SHOP_CONFIG = {
     },
 
     security: {
-        dashboardPassword: "barber2024",  // ← CHANGE THIS TO YOUR PREFERRED PASSWORD
+        dashboardPassword: "barber2024",
         qrAccessToken: "barber_qr_2024",
         sessionTimeout: 3 * 60 * 1000,
         dashboardSessionDuration: 8 * 60 * 60 * 1000,
