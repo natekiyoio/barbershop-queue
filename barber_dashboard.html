@@ -8,6 +8,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Load configuration FIRST -->
+    <script src="config.js"></script>
+
     <style>
         * {
             margin: 0;
@@ -21,7 +25,6 @@
             --secondary: #a78bfa;
             --secondary-glow: rgba(167, 139, 250, 0.5);
             --success: #00ff9d;
-            /* Neon Green */
             --success-glow: rgba(0, 255, 157, 0.5);
             --danger: #f87171;
             --warning: #fbbf24;
@@ -35,7 +38,7 @@
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #0c0a2e;
+            background: var(--bg-dark);
             min-height: 100vh;
             padding: 20px;
             position: relative;
@@ -54,10 +57,9 @@
             width: 100%;
             height: 100%;
             z-index: -1;
-            background: #0c0a2e;
+            background: var(--bg-dark);
             overflow: hidden;
             transform: translateZ(0);
-            /* Hardware acceleration */
         }
 
         .blob {
@@ -103,7 +105,6 @@
             }
         }
 
-        /* Animated background elements */
         body::before {
             content: '';
             position: fixed;
@@ -206,14 +207,14 @@
         }
 
         .header {
-            background: rgba(255, 255, 255, 0.08);
+            background: var(--glass-bg);
             backdrop-filter: blur(20px);
             padding: 30px;
             border-radius: 24px;
             margin-bottom: 30px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
             animation: slideUp 0.6s ease-out;
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            border: 1px solid var(--glass-border);
         }
 
         .header-top {
@@ -235,6 +236,12 @@
             letter-spacing: -1.5px;
             filter: drop-shadow(0 0 15px var(--primary-glow));
             text-align: center;
+        }
+
+        .shop-logo {
+            height: 50px;
+            margin-right: 15px;
+            vertical-align: middle;
         }
 
         .header-icon {
@@ -287,6 +294,7 @@
             margin-bottom: 30px;
             flex-wrap: wrap;
             animation: slideUp 0.6s ease-out 0.1s backwards;
+            width: 100%;
         }
 
         .btn {
@@ -306,13 +314,6 @@
         .btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
-        }
-
-        .controls {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 30px;
-            width: 100%;
         }
 
         .btn-refresh {
@@ -414,14 +415,14 @@
         }
 
         .queue-card {
-            background: rgba(255, 255, 255, 0.08);
+            background: var(--glass-bg);
             backdrop-filter: blur(25px);
             border-radius: 20px;
             padding: 30px;
             margin-bottom: 25px;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            border: 1px solid var(--glass-border);
             position: relative;
             overflow: hidden;
             animation: slideUp 0.6s ease-out backwards;
@@ -463,7 +464,6 @@
             margin-bottom: 15px;
             text-shadow: 0 0 8px var(--primary-glow);
             padding-right: 60px;
-            /* Prevent overlap with position badge */
         }
 
         .customer-details {
@@ -724,12 +724,6 @@
             margin: 0 auto 20px;
         }
 
-        @keyframes rotate {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
         .back-btn {
             display: none;
             cursor: pointer;
@@ -865,14 +859,14 @@
         }
 
         .login-card {
-            background: rgba(255, 255, 255, 0.08);
+            background: var(--glass-bg);
             backdrop-filter: blur(25px);
             border-radius: 28px;
             padding: 50px 40px;
             max-width: 420px;
             width: 100%;
             box-shadow: 0 25px 70px rgba(0, 0, 0, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            border: 1px solid var(--glass-border);
             animation: slideUp 0.6s ease-out;
             text-align: center;
         }
@@ -1051,7 +1045,7 @@
     <div id="loginScreen" class="login-screen">
         <div class="login-card">
             <div class="login-icon">💈</div>
-            <h1 class="login-title">Barber Dashboard</h1>
+            <h1 class="login-title" id="loginTitle">Barber Dashboard</h1>
             <p class="login-subtitle">Enter your access code to continue</p>
 
             <form id="loginForm" class="login-form">
@@ -1067,7 +1061,7 @@
             </form>
 
             <div class="login-footer">
-                🔒 Protected access for <span>authorized barbers only</span>
+                🔒 Protected access for <span>authorized staff only</span>
             </div>
         </div>
     </div>
@@ -1076,7 +1070,7 @@
     <div class="container">
         <div id="loading" class="loading">
             <div class="loading-spinner"></div>
-            <div class="loading-text">Loading premium dashboard...</div>
+            <div class="loading-text">Loading dashboard...</div>
         </div>
 
         <div id="dashboard" style="display: none;">
@@ -1138,13 +1132,57 @@
 
     <script>
         // ============================================
-        // AUTHENTICATION CONFIGURATION
-        // Change this password to your desired value
+        // CONFIGURATION - Loaded from config.js
         // ============================================
-        const AUTH_CONFIG = {
-            password: 'barber2024',           // Change this to your password
-            sessionDuration: 8 * 60 * 60 * 1000  // 8 hours in milliseconds
+
+        // Build CONFIG object from SHOP_CONFIG
+        const CONFIG = {
+            dashboardUrl: getApiUrl('queue'),
+            startServiceUrl: getApiUrl('startService'),
+            completeServiceUrl: getApiUrl('completeService'),
+            noShowUrl: getApiUrl('noShow'),
+            callbackUrl: getApiUrl('callback'),
+            cancelUrl: getApiUrl('cancel'),
+            barbers: SHOP_CONFIG.barbers
         };
+
+        // Authentication config from SHOP_CONFIG
+        const AUTH_CONFIG = {
+            password: SHOP_CONFIG.security.dashboardPassword,
+            sessionDuration: SHOP_CONFIG.security.dashboardSessionDuration
+        };
+
+        const QUOTES = [
+            { text: "Your hair is the crown you never take off.", author: "Traditional" },
+            { text: "Invest in your hair, it is the crown you never take off.", author: "Barber Wisdom" },
+            { text: "Success is the result of preparation meeting opportunity.", author: "Seneca" }
+        ];
+
+        const TIPS = [
+            "Keep your station clean between clients.",
+            "Greet every customer with a smile.",
+            "Double check details before finishing a cut."
+        ];
+
+        let allCustomers = [];
+        let currentBarberId = 'hub';
+        let notifiedCustomers = new Set();
+
+        // ============================================
+        // BRANDING SETUP
+        // ============================================
+        function setupBranding() {
+            const loginTitle = document.getElementById('loginTitle');
+            const dashboardTitle = document.getElementById('dashboardTitle');
+
+            if (SHOP_CONFIG.useGenericBranding) {
+                loginTitle.textContent = 'Barber Dashboard';
+                document.title = 'Barber Queue Dashboard';
+            } else {
+                loginTitle.textContent = SHOP_CONFIG.shopName + ' Dashboard';
+                document.title = SHOP_CONFIG.shopName + ' Queue Dashboard';
+            }
+        }
 
         // ============================================
         // AUTHENTICATION FUNCTIONS
@@ -1193,28 +1231,21 @@
             loginBtn.disabled = true;
             loginBtn.textContent = 'Verifying...';
 
-            // Small delay for UX
             setTimeout(() => {
                 if (password === AUTH_CONFIG.password) {
-                    // Success - save session
                     sessionStorage.setItem('barber_authenticated', 'true');
                     sessionStorage.setItem('auth_time', Date.now().toString());
-
                     errorEl.style.display = 'none';
                     hideLoginScreen();
                     initDashboard();
                 } else {
-                    // Wrong password
                     errorEl.style.display = 'block';
                     document.getElementById('passwordInput').value = '';
                     document.getElementById('passwordInput').focus();
-
-                    // Reset animation
                     errorEl.style.animation = 'none';
-                    errorEl.offsetHeight; // Trigger reflow
+                    errorEl.offsetHeight;
                     errorEl.style.animation = 'shake 0.5s ease-in-out';
                 }
-
                 loginBtn.disabled = false;
                 loginBtn.textContent = 'Access Dashboard';
             }, 500);
@@ -1228,51 +1259,11 @@
             document.getElementById('loginError').style.display = 'none';
         }
 
-        // Setup login form listener
         document.getElementById('loginForm').addEventListener('submit', handleLogin);
 
-        // Check authentication on page load
-        if (checkAuth()) {
-            hideLoginScreen();
-        } else {
-            showLoginScreen();
-        }
-
         // ============================================
-        // DASHBOARD CONFIGURATION
+        // DASHBOARD FUNCTIONS
         // ============================================
-        const CONFIG = {
-            dashboardUrl: 'https://n8n.srv1146840.hstgr.cloud/webhook/api/queue',
-            startServiceUrl: 'https://n8n.srv1146840.hstgr.cloud/webhook/start-service',
-            completeServiceUrl: 'https://n8n.srv1146840.hstgr.cloud/webhook/complete-service',
-            noShowUrl: 'https://n8n.srv1146840.hstgr.cloud/webhook/no-show',
-            callbackUrl: 'https://n8n.srv1146840.hstgr.cloud/webhook/customer-callback',
-            cancelUrl: 'https://n8n.srv1146840.hstgr.cloud/webhook/customer-cancel',
-            barbers: [
-                { id: 'john', name: 'John', avatar: '👨', color: '#6366f1' },
-                { id: 'mike', name: 'Mike', avatar: '👨‍🦱', color: '#8b5cf6' },
-                { id: 'sarah', name: 'Sarah', avatar: '👩', color: '#ec4899' },
-                { id: 'next_available', name: 'Next Available', avatar: '⚡', color: '#10b981' }
-            ]
-        };
-
-        const QUOTES = [
-            { text: "Your hair is the crown you never take off.", author: "Traditional" },
-            { text: "Invest in your hair, it is the crown you never take off.", author: "Barber Wisdom" },
-            { text: "Success is the result of preparation meeting opportunity.", author: "Seneca" }
-        ];
-
-        const TIPS = [
-            "Keep your station clean between clients.",
-            "Greet every customer with a smile.",
-            "Double check details before finishing a cut."
-        ];
-
-        let allCustomers = [];
-        let currentBarberId = 'hub';
-        let notifiedCustomers = new Set(); // Track customers who have been notified
-
-        // Initialize dashboard (called after successful login)
         async function initDashboard() {
             document.getElementById('loading').style.display = 'block';
             await loadDashboard();
@@ -1285,19 +1276,18 @@
 
             function startRefreshing() {
                 if (refreshInterval) clearInterval(refreshInterval);
-                refreshInterval = setInterval(loadDashboard, 45000); // 45s for API limit optimization
+                refreshInterval = setInterval(loadDashboard, 45000);
             }
 
             function stopRefreshing() {
                 if (refreshInterval) clearInterval(refreshInterval);
             }
 
-            // Page Visibility API - Stop refreshing when tab is hidden
             document.addEventListener('visibilitychange', () => {
                 if (document.hidden) {
                     stopRefreshing();
                 } else {
-                    loadDashboard(); // Refresh immediately when returning
+                    loadDashboard();
                     startRefreshing();
                 }
             });
@@ -1328,7 +1318,6 @@
                 document.getElementById('dashboard').style.display = 'grid';
             } catch (err) {
                 console.warn('Dashboard load error:', err);
-                // On error, show idle state if we have no data
                 if (allCustomers.length === 0) {
                     render();
                     updateStats();
@@ -1344,7 +1333,6 @@
             document.getElementById('totalWaiting').textContent = filtered.filter(c => c.status === 'WAITING').length;
             document.getElementById('totalInService').textContent = filtered.filter(c => c.status === 'IN_SERVICE').length;
 
-            // Average wait time
             const waiting = filtered.filter(c => c.status === 'WAITING');
             const avg = waiting.length > 0 ? Math.ceil(waiting.reduce((s, c) => s + (parseInt(c.service_duration) || 30), 0) / (currentBarberId === 'hub' ? 3 : 1)) : 0;
             document.getElementById('avgWaitTime').textContent = `~${avg} min`;
@@ -1358,10 +1346,26 @@
             }
         }
 
+        // Helper function to format wait time as hours and minutes
+        function formatWaitTime(totalMinutes) {
+            const hours = Math.floor(totalMinutes / 60);
+            const mins = totalMinutes % 60;
+
+            if (hours > 0 && mins > 0) {
+                return `${hours} hour${hours > 1 ? 's' : ''} ${mins} min${mins > 1 ? 's' : ''}`;
+            } else if (hours > 0) {
+                return `${hours} hour${hours > 1 ? 's' : ''}`;
+            } else {
+                return `${mins} min${mins > 1 ? 's' : ''}`;
+            }
+        }
+
         function renderHub() {
             const container = document.getElementById('mainContent');
             document.getElementById('backBtn').style.display = 'none';
-            document.getElementById('dashboardTitle').innerHTML = 'Barber Shop Hub';
+
+            const title = SHOP_CONFIG.useGenericBranding ? 'Barber Shop Hub' : SHOP_CONFIG.shopName + ' Hub';
+            document.getElementById('dashboardTitle').innerHTML = title;
 
             if (allCustomers.length === 0) {
                 renderEmptyState(container, "All clear!", "No clients in any queue.");
@@ -1373,9 +1377,9 @@
                 const wait = q.reduce((s, c) => s + (parseInt(c.service_duration) || 30), 0);
                 return `
                     <div class="barber-hub-card" onclick="selectBarber('${barber.id}')">
-                        <div class="barber-avatar-large">${barber.avatar}</div>
+                        <div class="barber-avatar-large" style="background: linear-gradient(135deg, ${barber.color}, ${barber.color}dd);">${barber.avatar}</div>
                         <div class="barber-hub-name">${barber.name}</div>
-                        <div class="wait-time-badge">${wait} min wait</div>
+                        <div class="wait-time-badge">${formatWaitTime(wait)} wait</div>
                         <div style="color: #64748b; font-size: 13px;">${q.length} customers active</div>
                     </div>
                 `;
@@ -1423,7 +1427,7 @@
                     </div>
                     <div class="time-info">
                         <span class="time-item">⏱️ ${c.service_duration}min</span>
-                        <span class="time-item">⏰ Waiting: ${Math.floor((new Date() - new Date(c.checkin_time)) / 60000)}m</span>
+                        <span class="time-item">⏰ Waiting: ${formatWaitTime(Math.floor((new Date() - new Date(c.checkin_time)) / 60000))}</span>
                     </div>
                     <div class="actions">
                         ${c.status !== 'IN_SERVICE' ? `<button class="btn btn-start" onclick="updateStatus('${c.customer_id}', 'start')">▶️ Start</button>` : ''}
@@ -1438,6 +1442,8 @@
 
         function renderEmptyState(container, title, description) {
             const quote = QUOTES[Math.floor(Math.random() * QUOTES.length)];
+            const shopName = SHOP_CONFIG.useGenericBranding ? 'Barber Shop' : SHOP_CONFIG.shopName;
+
             container.innerHTML = `
                 <div class="empty-state">
                     <div class="empty-state-content">
@@ -1459,7 +1465,7 @@
                         </div>
 
                         <div class="ready-status">
-                            <span>● Barber Shop is Active & Ready</span>
+                            <span>● ${shopName} is Active & Ready</span>
                         </div>
 
                         <div style="background: rgba(255, 255, 255, 0.03); padding: 25px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); text-align: left;">
@@ -1473,7 +1479,6 @@
         }
 
         async function updateStatus(customerId, action) {
-            // Optimistic UI: Immediately remove/update locally
             const card = document.querySelector(`[data-customer-id="${customerId}"]`);
             if (card) {
                 card.style.opacity = '0.5';
@@ -1481,8 +1486,6 @@
                 card.style.transition = 'all 0.3s ease';
             }
 
-            // Also remove from local array for immediate re-render if needed
-            // But we'll just wait for the fade out to feel more natural
             logActivity('System', `Processing ${action}...`, 'info');
 
             const endpoints = {
@@ -1494,18 +1497,14 @@
             };
 
             try {
-                // We fire and forget the UI update (optimistic)
-                // But we still wait for the fetch to trigger a background refresh
                 fetch(endpoints[action], {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ customerId })
                 }).then(() => {
-                    // Small delay to let n8n process before we fetch the new state
                     setTimeout(loadDashboard, 1000);
                 });
 
-                // If it's a destructive action (complete/cancel/noshow), hide it now
                 if (action !== 'start' && action !== 'callback') {
                     if (card) {
                         card.style.maxHeight = '0';
@@ -1516,23 +1515,18 @@
                         setTimeout(() => card.remove(), 400);
                     }
                 } else if (action === 'start') {
-                    // Start service just updates status locally for now
                     const badge = card.querySelector('.status-badge');
                     if (badge) {
                         badge.textContent = 'IN_SERVICE';
                         badge.className = 'status-badge status-in_service';
                     }
                 } else if (action === 'callback') {
-                    // Callback just sends SMS, restore card appearance and show feedback
                     if (card) {
                         card.style.opacity = '1';
                         card.style.transform = 'scale(1)';
                     }
-                    // Mark customer as notified
                     notifiedCustomers.add(customerId);
-                    // Show success toast
                     showToast('SMS sent! Customer has been notified to come back.');
-                    // Re-render to show notified badge and disable button
                     render();
                     logActivity('Barber', 'Come back SMS sent to customer', 'success');
                 }
@@ -1571,7 +1565,6 @@
             toast.className = 'toast';
             toast.innerHTML = `<span class="toast-icon">✅</span><span>${message}</span>`;
             container.appendChild(toast);
-            // Remove toast after animation completes
             setTimeout(() => toast.remove(), 3000);
         }
 
@@ -1580,9 +1573,16 @@
             document.getElementById('quickTip').textContent = `"${tip}"`;
         }
 
-        // Auto-init if already authenticated
+        // ============================================
+        // INITIALIZATION
+        // ============================================
+        setupBranding();
+
         if (checkAuth()) {
+            hideLoginScreen();
             initDashboard();
+        } else {
+            showLoginScreen();
         }
     </script>
 </body>
