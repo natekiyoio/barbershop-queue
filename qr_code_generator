@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Generator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <!-- Load configuration FIRST -->
+    <script src="config.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #818cf8;
+            --primary-glow: rgba(129, 140, 248, 0.5);
+            --secondary: #a78bfa;
+            --success: #34d399;
+            --text-main: #f8fafc;
+            --text-muted: #cbd5e1;
+            --bg-dark: #0c0a2e;
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.15);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-dark);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.3) 0%, transparent 70%);
+            border-radius: 50%;
+            top: -200px;
+            left: -200px;
+            animation: float 20s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.3) 0%, transparent 70%);
+            border-radius: 50%;
+            bottom: -150px;
+            right: -150px;
+            animation: float 15s ease-in-out infinite reverse;
+            pointer-events: none;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            50% {
+                transform: translate(40px, 40px) scale(1.1);
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .container {
+            max-width: 500px;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(25px);
+            border-radius: 28px;
+            padding: 40px;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--glass-border);
+            animation: slideUp 0.6s ease-out;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .header-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 0 15px var(--primary-glow));
+        }
+
+        .header h1 {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 10px;
+            letter-spacing: -1px;
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-size: 15px;
+        }
+
+        .shop-name-display {
+            background: rgba(129, 140, 248, 0.1);
+            border: 1px solid rgba(129, 140, 248, 0.2);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .shop-name-display label {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .shop-name-display .name {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-top: 5px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 700;
+            color: var(--text-main);
+            font-size: 14px;
+        }
+
+        input {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid var(--glass-border);
+            border-radius: 14px;
+            font-size: 15px;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px var(--primary-glow);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 18px;
+            border: none;
+            border-radius: 14px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            box-shadow: 0 0 25px var(--primary-glow);
+            margin-bottom: 15px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 40px var(--primary-glow);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+            color: white;
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+            display: none;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 35px rgba(16, 185, 129, 0.5);
+        }
+
+        .qr-result {
+            display: none;
+            margin-top: 30px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            text-align: center;
+            border: 1px solid var(--glass-border);
+        }
+
+        .qr-container {
+            background: white;
+            padding: 20px;
+            border-radius: 16px;
+            display: inline-block;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        #qrcode {
+            display: inline-block;
+        }
+
+        #qrcode img {
+            display: block;
+        }
+
+        .qr-url {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 12px;
+            color: var(--text-muted);
+            word-break: break-all;
+            margin-bottom: 20px;
+            font-family: monospace;
+        }
+
+        .info-box {
+            background: rgba(129, 140, 248, 0.1);
+            border: 1px solid rgba(129, 140, 248, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 25px;
+        }
+
+        .info-box h3 {
+            color: var(--primary);
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .info-box ul {
+            list-style: none;
+            text-align: left;
+        }
+
+        .info-box li {
+            color: var(--text-muted);
+            font-size: 13px;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-box li:last-child {
+            border-bottom: none;
+        }
+
+        .token-display {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(52, 211, 153, 0.1);
+            border: 1px solid rgba(52, 211, 153, 0.2);
+            border-radius: 12px;
+        }
+
+        .token-display p {
+            color: var(--success);
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .token-display code {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-family: monospace;
+            color: var(--text-main);
+        }
+
+        @media (max-width: 500px) {
+            .card {
+                padding: 25px 20px;
+            }
+
+            .header h1 {
+                font-size: 26px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="header">
+                <div class="header-icon">📱</div>
+                <h1>QR Code Generator</h1>
+                <p>Generate a QR code for customer check-in access</p>
+            </div>
+
+            <div class="shop-name-display">
+                <label>Generating for</label>
+                <div class="name" id="shopNameDisplay">Loading...</div>
+            </div>
+
+            <div class="form-group">
+                <label>Check-In Page URL</label>
+                <input type="url" id="urlInput" placeholder="https://yourusername.github.io/queue-manager/checkin.html">
+            </div>
+
+            <button class="btn btn-primary" onclick="generateQR()">
+                🔗 Generate QR Code
+            </button>
+
+            <div class="qr-result" id="qrResult">
+                <div class="qr-container">
+                    <div id="qrcode"></div>
+                </div>
+                <div class="qr-url" id="fullUrl"></div>
+                <button class="btn btn-success" id="downloadBtn" onclick="downloadQR()">
+                    📥 Download QR Code
+                </button>
+            </div>
+
+            <div class="info-box">
+                <h3>📋 Instructions</h3>
+                <ul>
+                    <li>✏️ Enter your GitHub Pages URL above</li>
+                    <li>🔑 Token will be auto-appended from config.js</li>
+                    <li>📥 Download and print at 4x4 inches minimum</li>
+                    <li>📍 Display QR code at shop entrance</li>
+                </ul>
+            </div>
+
+            <div class="token-display">
+                <p>🔐 Current Access Token: <code id="tokenDisplay">loading...</code></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Display shop name and token from config
+        document.getElementById('shopNameDisplay').textContent =
+            SHOP_CONFIG.useGenericBranding ? 'Generic Shop' : SHOP_CONFIG.shopName;
+        document.getElementById('tokenDisplay').textContent = SHOP_CONFIG.security.qrAccessToken;
+
+        let qrCodeInstance = null;
+
+        function generateQR() {
+            const urlInput = document.getElementById('urlInput');
+            const baseUrl = urlInput.value.trim();
+
+            if (!baseUrl) {
+                alert('Please enter your check-in page URL');
+                return;
+            }
+
+            try {
+                new URL(baseUrl);
+            } catch (e) {
+                alert('Please enter a valid URL (including https://)');
+                return;
+            }
+
+            // Build full URL with token from config
+            const separator = baseUrl.includes('?') ? '&' : '?';
+            const fullUrl = `${baseUrl}${separator}token=${SHOP_CONFIG.security.qrAccessToken}`;
+
+            document.getElementById('qrResult').style.display = 'block';
+            document.getElementById('fullUrl').textContent = fullUrl;
+            document.getElementById('downloadBtn').style.display = 'block';
+
+            const qrContainer = document.getElementById('qrcode');
+            qrContainer.innerHTML = '';
+
+            // Use theme colors from config
+            qrCodeInstance = new QRCode(qrContainer, {
+                text: fullUrl,
+                width: 256,
+                height: 256,
+                colorDark: SHOP_CONFIG.theme.bgDark,
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+
+            setTimeout(() => {
+                document.getElementById('qrResult').scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center'
+                });
+            }, 100);
+        }
+
+        function downloadQR() {
+            const qrImage = document.querySelector('#qrcode img');
+            if (!qrImage) {
+                alert('Please generate a QR code first');
+                return;
+            }
+
+            const shopName = SHOP_CONFIG.useGenericBranding ? 'shop' :
+                SHOP_CONFIG.shopName.toLowerCase().replace(/\s+/g, '-');
+
+            const link = document.createElement('a');
+            link.download = `${shopName}-checkin-qr.png`;
+            link.href = qrImage.src;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        window.addEventListener('load', () => {
+            document.getElementById('urlInput').focus();
+        });
+
+        document.getElementById('urlInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') generateQR();
+        });
+    </script>
+</body>
+
+</html>
