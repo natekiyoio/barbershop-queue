@@ -858,6 +858,11 @@
             padding: 20px;
         }
 
+        /* Use class-based hiding for more robust hide/show behavior */
+        .login-screen.hidden {
+            display: none !important;
+        }
+
         .login-card {
             background: var(--glass-bg);
             backdrop-filter: blur(25px);
@@ -1167,6 +1172,7 @@
         let allCustomers = [];
         let currentBarberId = 'hub';
         let notifiedCustomers = new Set();
+        let lastRefreshTime = 0; // Track last API call for debouncing
 
         // ============================================
         // BRANDING SETUP
@@ -1201,13 +1207,13 @@
         }
 
         function showLoginScreen() {
-            document.getElementById('loginScreen').style.display = 'flex';
+            document.getElementById('loginScreen').classList.remove('hidden');
             document.getElementById('loading').style.display = 'none';
             document.getElementById('dashboard').style.display = 'none';
         }
 
         function hideLoginScreen() {
-            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('loginScreen').classList.add('hidden');
         }
 
         function togglePassword() {
@@ -1273,21 +1279,27 @@
             setInterval(rotateTip, 10000);
 
             let refreshInterval;
+            const REFRESH_INTERVAL = 90000; // 90 seconds (optimized from 45s)
+            const DEBOUNCE_TIME = 15000;    // 15 seconds minimum between refreshes
 
             function startRefreshing() {
                 if (refreshInterval) clearInterval(refreshInterval);
-                refreshInterval = setInterval(loadDashboard, 45000);
+                refreshInterval = setInterval(loadDashboard, REFRESH_INTERVAL);
             }
 
             function stopRefreshing() {
                 if (refreshInterval) clearInterval(refreshInterval);
             }
 
+            // Debounced visibility change to prevent excessive API calls
             document.addEventListener('visibilitychange', () => {
                 if (document.hidden) {
                     stopRefreshing();
                 } else {
-                    loadDashboard();
+                    const timeSinceLastRefresh = Date.now() - lastRefreshTime;
+                    if (timeSinceLastRefresh >= DEBOUNCE_TIME) {
+                        loadDashboard();
+                    }
                     startRefreshing();
                 }
             });
@@ -1296,6 +1308,15 @@
         }
 
         async function loadDashboard() {
+            // Re-validate authentication on each refresh to prevent stale sessions
+            if (!checkAuth()) {
+                showLoginScreen();
+                return;
+            }
+
+            // Ensure login screen stays hidden
+            hideLoginScreen();
+
             try {
                 const response = await fetch(CONFIG.dashboardUrl);
                 if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
@@ -1497,14 +1518,15 @@
             };
 
             try {
+                // Fire-and-forget API call - no post-action refresh needed
+                // UI is updated optimistically below, next scheduled refresh will sync
                 fetch(endpoints[action], {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ customerId })
-                }).then(() => {
-                    setTimeout(loadDashboard, 1000);
-                });
+                }).catch(err => console.warn('Action request failed:', err));
 
+                // Optimistic UI updates (no API call)
                 if (action !== 'start' && action !== 'callback') {
                     if (card) {
                         card.style.maxHeight = '0';
