@@ -8,10 +8,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
-    <!-- Load configuration FIRST -->
-    <script src="config.js"></script>
-
     <style>
         * {
             margin: 0;
@@ -40,7 +36,7 @@
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--bg-dark);
+            background: #0c0a2e;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -61,7 +57,7 @@
             width: 100%;
             height: 100%;
             z-index: -1;
-            background: var(--bg-dark);
+            background: #0c0a2e;
             overflow: hidden;
             transform: translateZ(0);
         }
@@ -171,22 +167,17 @@
         }
 
         .card {
-            background: var(--glass-bg);
+            background: rgba(255, 255, 255, 0.08);
             backdrop-filter: blur(25px);
             border-radius: 28px;
             padding: 40px;
             box-shadow: 0 25px 70px rgba(0, 0, 0, 0.5);
-            border: 1px solid var(--glass-border);
+            border: 1px solid rgba(255, 255, 255, 0.15);
         }
 
         .header {
             text-align: center;
             margin-bottom: 35px;
-        }
-
-        .shop-logo {
-            height: 60px;
-            margin-bottom: 15px;
         }
 
         .header h1 {
@@ -718,14 +709,14 @@
         }
 
         .restricted-card {
-            background: var(--glass-bg);
+            background: rgba(255, 255, 255, 0.08);
             backdrop-filter: blur(25px);
             border-radius: 28px;
             padding: 50px 40px;
             max-width: 450px;
             width: 100%;
             box-shadow: 0 25px 70px rgba(0, 0, 0, 0.5);
-            border: 1px solid var(--glass-border);
+            border: 1px solid rgba(255, 255, 255, 0.15);
             animation: slideUp 0.6s ease-out;
             text-align: center;
         }
@@ -844,9 +835,8 @@
     <div class="container">
         <div class="card">
             <div class="header">
-                <div id="shopLogo"></div>
-                <h1 id="headerTitle">✂️ Walk-In Check-In</h1>
-                <p id="headerSubtitle">Select your barber and service to join the queue</p>
+                <h1>✂️ Walk-In Check-In</h1>
+                <p>Select your barber and service to join the queue</p>
             </div>
 
             <div id="errorMessage" class="error-message">
@@ -858,6 +848,7 @@
                 <div class="form-group">
                     <label>Select Your Barber <span class="required">*</span></label>
                     <div class="barber-grid" id="barberGrid">
+                        <!-- Barbers will be loaded here -->
                         <div style="grid-column: 1/-1; text-align: center; padding: 20px;">
                             <div class="loading-spinner-small" style="margin: 0 auto;"></div>
                             <p style="color: #64748b; font-size: 14px; margin-top: 10px;">Loading barbers...</p>
@@ -879,7 +870,7 @@
                     <label for="phone">Phone Number <span class="required">*</span></label>
                     <div class="input-group phone-input-wrapper">
                         <span class="input-icon">📱</span>
-                        <span class="country-code" id="countryCode">+1</span>
+                        <span class="country-code">+1</span>
                         <input type="tel" id="phone" name="phone" placeholder="(555) 123-4567" required
                             autocomplete="tel-national">
                     </div>
@@ -889,8 +880,117 @@
                 <div class="form-group">
                     <label>Service Type <span class="required">*</span></label>
                     <div class="service-container">
-                        <div class="service-scroll" id="serviceList">
-                            <!-- Services will be rendered dynamically -->
+                        <div class="service-scroll">
+                            <div class="service-option">
+                                <input type="radio" id="mens-regular" name="service" value="Men's Regular Cut"
+                                    data-duration="40" checked>
+                                <label for="mens-regular" class="service-label">
+                                    <div class="service-info">
+                                        <div class="service-name">Men's Regular Cut</div>
+                                        <div class="service-details"><span>⏱️ 40 mins</span></div>
+                                    </div>
+                                    <div class="service-price">$30</div>
+                                </label>
+                            </div>
+                            <div class="service-option">
+                                <input type="radio" id="skin-fade" name="service" value="Skin Fade (Only)"
+                                    data-duration="40">
+                                <label for="skin-fade" class="service-label">
+                                    <div class="service-info">
+                                        <div class="service-name">Skin Fade (Only)</div>
+                                        <div class="service-details"><span>⏱️ 40 mins</span></div>
+                                    </div>
+                                    <div class="service-price">$30</div>
+                                </label>
+                            </div>
+                            <div class="service-option">
+                                <input type="radio" id="skin-fade-beard" name="service"
+                                    value="Skin Fade + Beard Trim & Line Up" data-duration="60">
+                                <label for="skin-fade-beard" class="service-label">
+                                    <div class="service-info">
+                                        <div class="service-name">Skin Fade + Beard Trim & Line Up</div>
+                                        <div class="service-details"><span>⏱️ 1 Hr</span></div>
+                                    </div>
+                                    <div class="service-price">$40</div>
+                                </label>
+                            </div>
+                            <div class="service-option">
+                                <input type="radio" id="taper-fade" name="service" value="Taper Fade + Beard Line Up"
+                                    data-duration="60">
+                                <label for="taper-fade" class="service-label">
+                                    <div class="service-info">
+                                        <div class="service-name">Taper Fade + Beard Line Up</div>
+                                        <div class="service-details"><span>⏱️ 1 Hr</span></div>
+                                    </div>
+                                    <div class="service-price">$35</div>
+                                </label>
+                            </div>
+                            <div class="service-option">
+                                <input type="radio" id="hair-beard-only" name="service"
+                                    value="Hair + Beard Line Up (Only)" data-duration="20">
+                                <label for="hair-beard-only" class="service-label">
+                                    <div class="service-info">
+                                        <div class="service-name">Hair + Beard Line Up (Only)</div>
+                                        <div class="service-details"><span>⏱️ 20 mins</span></div>
+                                    </div>
+                                    <div class="service-price">$20</div>
+                                </label>
+                            </div>
+                            <div class="service-option">
+                                <input type="radio" id="womens-cut" name="service" value="Women's Hair Cut"
+                                    data-duration="40">
+                                <label for="womens-cut" class="service-label">
+                                    <div class="service-info">
+                                        <div class="service-name">Women's Hair Cut</div>
+                                        <div class="service-details"><span>⏱️ 40 mins</span></div>
+                                    </div>
+                                    <div class="service-price">$30</div>
+                                </label>
+                            </div>
+                            <div class="service-option">
+                                <input type="radio" id="seniors" name="service" value="Seniors' Haircut"
+                                    data-duration="30">
+                                <label for="seniors" class="service-label">
+                                    <div class="service-info">
+                                        <div class="service-name">Seniors' Haircut</div>
+                                        <div class="service-details"><span>⏱️ 30 mins</span></div>
+                                    </div>
+                                    <div class="service-price">$25</div>
+                                </label>
+                            </div>
+                            <div class="service-option">
+                                <input type="radio" id="kids-cut" name="service" value="Kids' Cut" data-duration="30">
+                                <label for="kids-cut" class="service-label">
+                                    <div class="service-info">
+                                        <div class="service-name">Kids' Cut</div>
+                                        <div class="service-details"><span>⏱️ 30 mins</span></div>
+                                    </div>
+                                    <div class="service-price">$20</div>
+                                </label>
+                            </div>
+                            <div class="service-option">
+                                <input type="radio" id="luxury" name="service" value="Luxury Service"
+                                    data-duration="95">
+                                <label for="luxury" class="service-label">
+                                    <div class="service-info">
+                                        <div class="service-name">Luxury Service</div>
+                                        <div class="service-details"><span>⏱️ 1 Hr 35 mins</span><span>💈 Full
+                                                Package</span></div>
+                                    </div>
+                                    <div class="service-price">$60</div>
+                                </label>
+                            </div>
+                            <div class="service-option">
+                                <input type="radio" id="mens-wash" name="service" value="Men's Wash (Buzz Cut)"
+                                    data-duration="10">
+                                <label for="mens-wash" class="service-label">
+                                    <div class="service-info">
+                                        <div class="service-name">Men's Wash (Buzz Cut)</div>
+                                        <div class="service-details"><span>⏱️ 10 mins</span></div>
+                                    </div>
+                                    <div class="service-price">$10</div>
+                                </label>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -927,121 +1027,71 @@
 
     <script>
         // ============================================
-        // CONFIGURATION - Loaded from config.js
+        // ACCESS TOKEN CONFIGURATION
+        // Change this token to match your QR code
         // ============================================
-
         const SECURITY = {
-            ACCESS_TOKEN: SHOP_CONFIG.security.qrAccessToken,
+            ACCESS_TOKEN: 'barber_qr_2024', // Token required in URL ?token=xxx
             SESSION_KEY: 'checkin_access_granted',
             SESSION_TIME_KEY: 'checkin_access_time',
-            SESSION_TIMEOUT: SHOP_CONFIG.security.sessionTimeout,
-            GEOLOCATION_ENABLED: SHOP_CONFIG.location.enabled,
-            SHOP_LATITUDE: SHOP_CONFIG.location.latitude,
-            SHOP_LONGITUDE: SHOP_CONFIG.location.longitude,
-            MAX_DISTANCE_METERS: SHOP_CONFIG.location.maxDistanceMeters
+            SESSION_TIMEOUT: 3 * 60 * 1000,  // 3 minutes in milliseconds
+
+            // ============================================
+            // GEOLOCATION SETTINGS
+            // Set your shop's coordinates below (use Google Maps to find them)
+            // ============================================
+            GEOLOCATION_ENABLED: true,      // Set to false to disable location check
+            SHOP_LATITUDE: 0.0,             // REPLACE with your shop's latitude
+            SHOP_LONGITUDE: 0.0,            // REPLACE with your shop's longitude  
+            MAX_DISTANCE_METERS: 100        // How close user must be (in meters)
         };
 
-        const CONFIG = {
-            checkinUrl: getApiUrl('checkin'),
-            dashboardUrl: getApiUrl('queue'),
-            barbers: SHOP_CONFIG.barbers,
-            services: SHOP_CONFIG.services
-        };
-
-        let queueData = [];
         let sessionTimeoutId = null;
         let locationVerified = false;
-        const phoneInput = document.getElementById('phone');
-
-        // ============================================
-        // BRANDING SETUP
-        // ============================================
-        function setupBranding() {
-            const headerTitle = document.getElementById('headerTitle');
-            const headerSubtitle = document.getElementById('headerSubtitle');
-            const shopLogoDiv = document.getElementById('shopLogo');
-
-            // Set country code
-            document.getElementById('countryCode').textContent = SHOP_CONFIG.sms.countryCode;
-
-            if (SHOP_CONFIG.useGenericBranding) {
-                headerTitle.innerHTML = '✂️ Walk-In Check-In';
-                headerSubtitle.textContent = 'Select your barber and service to join the queue';
-                document.title = 'Walk-In Check-In';
-            } else {
-                headerTitle.innerHTML = `✂️ ${SHOP_CONFIG.shopName}`;
-                headerSubtitle.textContent = SHOP_CONFIG.shopTagline || 'Walk-In Check-In';
-                document.title = SHOP_CONFIG.shopName + ' Check-In';
-            }
-
-            // Add logo if configured
-            if (SHOP_CONFIG.logoUrl) {
-                shopLogoDiv.innerHTML = `<img src="${SHOP_CONFIG.logoUrl}" class="shop-logo" alt="${SHOP_CONFIG.shopName}">`;
-            }
-        }
-
-        // ============================================
-        // RENDER SERVICES FROM CONFIG
-        // ============================================
-        function renderServices() {
-            const container = document.getElementById('serviceList');
-
-            const servicesHTML = CONFIG.services.map((service, index) => {
-                const durationText = formatDuration(service.duration);
-                const priceText = SHOP_CONFIG.display.showPrices ? formatPrice(service.price) : '';
-                const descText = service.description ? `<span>💈 ${service.description}</span>` : '';
-
-                return `
-                    <div class="service-option">
-                        <input type="radio" id="${service.id}" name="service" value="${service.name}" 
-                            data-duration="${service.duration}" ${index === 0 ? 'checked' : ''}>
-                        <label for="${service.id}" class="service-label">
-                            <div class="service-info">
-                                <div class="service-name">${service.name}</div>
-                                <div class="service-details">
-                                    <span>⏱️ ${durationText}</span>
-                                    ${descText}
-                                </div>
-                            </div>
-                            ${priceText ? `<div class="service-price">${priceText}</div>` : ''}
-                        </label>
-                    </div>
-                `;
-            }).join('');
-
-            container.innerHTML = servicesHTML;
-        }
 
         // ============================================
         // ACCESS VALIDATION
         // ============================================
         function validateAccess() {
+            // Check URL for token
             const urlParams = new URLSearchParams(window.location.search);
             const urlToken = urlParams.get('token');
+
+            // Check session for previously granted access
             const sessionAccess = sessionStorage.getItem(SECURITY.SESSION_KEY);
             const sessionTime = sessionStorage.getItem(SECURITY.SESSION_TIME_KEY);
 
             if (urlToken === SECURITY.ACCESS_TOKEN) {
+                // Valid token in URL, grant session access
                 sessionStorage.setItem(SECURITY.SESSION_KEY, 'true');
                 sessionStorage.setItem(SECURITY.SESSION_TIME_KEY, Date.now().toString());
+                // Clean up URL (remove token for cleaner look)
                 window.history.replaceState({}, document.title, window.location.pathname);
                 startSessionTimer();
                 return true;
             } else if (sessionAccess === 'true' && sessionTime) {
+                // Check if session is still valid (within timeout)
                 const elapsed = Date.now() - parseInt(sessionTime);
                 if (elapsed < SECURITY.SESSION_TIMEOUT) {
                     startSessionTimer(SECURITY.SESSION_TIMEOUT - elapsed);
                     return true;
                 } else {
+                    // Session expired
                     clearSession();
                     return false;
                 }
             }
+
             return false;
         }
 
         function startSessionTimer(remainingTime = SECURITY.SESSION_TIMEOUT) {
-            if (sessionTimeoutId) clearTimeout(sessionTimeoutId);
+            // Clear any existing timer
+            if (sessionTimeoutId) {
+                clearTimeout(sessionTimeoutId);
+            }
+
+            // Set timer to lock the form
             sessionTimeoutId = setTimeout(() => {
                 clearSession();
                 showSessionExpiredScreen();
@@ -1058,17 +1108,23 @@
         }
 
         function showSessionExpiredScreen() {
+            // Disable all form inputs immediately
             const form = document.getElementById('checkinForm');
             if (form) {
                 const inputs = form.querySelectorAll('input, button, select');
                 inputs.forEach(input => input.disabled = true);
             }
+
+            // Update the restricted message for expired sessions
             const restrictedCard = document.querySelector('.restricted-card');
             if (restrictedCard) {
                 restrictedCard.innerHTML = `
                     <div class="restricted-icon">⏱️</div>
                     <h1 class="restricted-title">Session Expired</h1>
-                    <p class="restricted-message">Your check-in session has timed out for security reasons.</p>
+                    <p class="restricted-message">
+                        Your check-in session has timed out for security reasons.
+                    </p>
+                    
                     <div class="restricted-instructions">
                         <div class="instruction-step">
                             <div class="step-number">1</div>
@@ -1079,6 +1135,7 @@
                             <div class="step-text">Complete your check-in within 3 minutes</div>
                         </div>
                     </div>
+                    
                     <div class="qr-hint">
                         <p>📱 Please scan the QR code to continue</p>
                     </div>
@@ -1098,46 +1155,74 @@
         }
 
         // ============================================
-        // GEOLOCATION
+        // GEOLOCATION FUNCTIONS
         // ============================================
         function calculateDistance(lat1, lon1, lat2, lon2) {
-            const R = 6371e3;
+            // Haversine formula to calculate distance between two coordinates
+            const R = 6371e3; // Earth's radius in meters
             const φ1 = lat1 * Math.PI / 180;
             const φ2 = lat2 * Math.PI / 180;
             const Δφ = (lat2 - lat1) * Math.PI / 180;
             const Δλ = (lon2 - lon1) * Math.PI / 180;
-            const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) + Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+
+            const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+                Math.cos(φ1) * Math.cos(φ2) *
+                Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
             const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-            return R * c;
+
+            return R * c; // Distance in meters
         }
 
         function showLocationError(errorType) {
             const restrictedCard = document.querySelector('.restricted-card');
             let icon, title, message;
+
             switch (errorType) {
                 case 'too_far':
-                    icon = '📍'; title = 'Not at Shop Location';
+                    icon = '📍';
+                    title = 'Not at Shop Location';
                     message = 'You must be at our shop to check in. Please visit us in person and scan the QR code.';
                     break;
                 case 'denied':
-                    icon = '🚫'; title = 'Location Access Required';
-                    message = 'Please allow location access to verify you are at our shop.';
+                    icon = '🚫';
+                    title = 'Location Access Required';
+                    message = 'Please allow location access to verify you are at our shop. This is required for security.';
+                    break;
+                case 'unavailable':
+                    icon = '📡';
+                    title = 'Location Unavailable';
+                    message = 'We couldn\'t determine your location. Please ensure location services are enabled and try again.';
                     break;
                 default:
-                    icon = '📡'; title = 'Location Unavailable';
-                    message = 'We couldn\'t determine your location. Please ensure location services are enabled.';
+                    icon = '❌';
+                    title = 'Location Error';
+                    message = 'There was a problem verifying your location. Please try again.';
             }
+
             if (restrictedCard) {
                 restrictedCard.innerHTML = `
                     <div class="restricted-icon">${icon}</div>
                     <h1 class="restricted-title">${title}</h1>
                     <p class="restricted-message">${message}</p>
+                    
                     <div class="restricted-instructions">
-                        <div class="instruction-step"><div class="step-number">1</div><div class="step-text">Visit our shop in person</div></div>
-                        <div class="instruction-step"><div class="step-number">2</div><div class="step-text">Enable location services</div></div>
-                        <div class="instruction-step"><div class="step-number">3</div><div class="step-text">Scan the QR code at the entrance</div></div>
+                        <div class="instruction-step">
+                            <div class="step-number">1</div>
+                            <div class="step-text">Visit our shop in person</div>
+                        </div>
+                        <div class="instruction-step">
+                            <div class="step-number">2</div>
+                            <div class="step-text">Enable location services on your device</div>
+                        </div>
+                        <div class="instruction-step">
+                            <div class="step-number">3</div>
+                            <div class="step-text">Scan the QR code at the entrance</div>
+                        </div>
                     </div>
-                    <div class="qr-hint" style="margin-top: 20px;"><p>📱 Check-in is only available at our shop location</p></div>
+                    
+                    <div class="qr-hint" style="margin-top: 20px;">
+                        <p>📱 Check-in is only available at our shop location</p>
+                    </div>
                 `;
             }
             showRestrictedScreen();
@@ -1149,8 +1234,12 @@
                 restrictedCard.innerHTML = `
                     <div class="restricted-icon" style="animation: pulse 1.5s infinite;">📍</div>
                     <h1 class="restricted-title" style="color: var(--primary);">Verifying Location</h1>
-                    <p class="restricted-message">Please allow location access when prompted...</p>
-                    <div style="margin-top: 20px;"><div class="loading-spinner-small" style="margin: 0 auto;"></div></div>
+                    <p class="restricted-message">
+                        Please allow location access when prompted...
+                    </p>
+                    <div style="margin-top: 20px;">
+                        <div class="loading-spinner-small" style="margin: 0 auto;"></div>
+                    </div>
                 `;
             }
             showRestrictedScreen();
@@ -1158,86 +1247,174 @@
 
         async function verifyLocation() {
             return new Promise((resolve) => {
-                if (!SECURITY.GEOLOCATION_ENABLED) { resolve(true); return; }
-                if (SECURITY.SHOP_LATITUDE === 0.0 && SECURITY.SHOP_LONGITUDE === 0.0) { resolve(true); return; }
-                if (!navigator.geolocation) { showLocationError('unavailable'); resolve(false); return; }
+                if (!SECURITY.GEOLOCATION_ENABLED) {
+                    resolve(true);
+                    return;
+                }
+
+                // Check if coordinates are configured
+                if (SECURITY.SHOP_LATITUDE === 0.0 && SECURITY.SHOP_LONGITUDE === 0.0) {
+                    console.warn('Shop coordinates not configured. Skipping location check.');
+                    resolve(true);
+                    return;
+                }
+
+                if (!navigator.geolocation) {
+                    showLocationError('unavailable');
+                    resolve(false);
+                    return;
+                }
 
                 showLocationChecking();
+
                 navigator.geolocation.getCurrentPosition(
                     (position) => {
-                        const distance = calculateDistance(position.coords.latitude, position.coords.longitude, SECURITY.SHOP_LATITUDE, SECURITY.SHOP_LONGITUDE);
-                        if (distance <= SECURITY.MAX_DISTANCE_METERS) { locationVerified = true; resolve(true); }
-                        else { showLocationError('too_far'); resolve(false); }
+                        const distance = calculateDistance(
+                            position.coords.latitude,
+                            position.coords.longitude,
+                            SECURITY.SHOP_LATITUDE,
+                            SECURITY.SHOP_LONGITUDE
+                        );
+
+                        console.log(`Distance from shop: ${Math.round(distance)} meters`);
+
+                        if (distance <= SECURITY.MAX_DISTANCE_METERS) {
+                            locationVerified = true;
+                            resolve(true);
+                        } else {
+                            showLocationError('too_far');
+                            resolve(false);
+                        }
                     },
                     (error) => {
-                        if (error.code === error.PERMISSION_DENIED) showLocationError('denied');
-                        else showLocationError('unavailable');
+                        if (error.code === error.PERMISSION_DENIED) {
+                            showLocationError('denied');
+                        } else {
+                            showLocationError('unavailable');
+                        }
                         resolve(false);
                     },
-                    { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 60000
+                    }
                 );
             });
         }
 
+        // ============================================
+        // INITIALIZE ACCESS CHECK
+        // ============================================
         async function initializeAccess() {
-            if (!validateAccess()) { showRestrictedScreen(); return; }
+            // First check token
+            if (!validateAccess()) {
+                showRestrictedScreen();
+                return;
+            }
+
+            // Then check location
             const locationOk = await verifyLocation();
-            if (locationOk) showCheckinForm();
+            if (locationOk) {
+                showCheckinForm();
+            }
         }
 
+        // Start access check
+        initializeAccess();
+
         // ============================================
-        // PHONE FORMATTING
+        // CONFIGURATION
         // ============================================
+        const CONFIG = {
+            checkinUrl: 'https://n8n.srv1146840.hstgr.cloud/webhook/checkin',
+            dashboardUrl: 'https://n8n.srv1146840.hstgr.cloud/webhook/api/queue',
+            // List of barbers (you can also fetch this from an API)
+            barbers: [
+                { id: 'john', name: 'John', avatar: '👨', color: '#6366f1' },
+                { id: 'mike', name: 'Mike', avatar: '👨🦱', color: '#8b5cf6' },
+                { id: 'sarah', name: 'Sarah', avatar: '👩', color: '#ec4899' },
+                { id: 'next_available', name: 'Next Available', avatar: '⚡', color: '#10b981' }
+            ]
+        };
+
+        let queueData = [];
+        const phoneInput = document.getElementById('phone');
+
+        // Phone formatting functions
         function normalizePhoneNumber(value) {
             let digits = value.replace(/\D/g, '');
-            if (digits.length === 11 && digits.startsWith('1')) digits = digits.substring(1);
-            if (digits.length > 10) digits = digits.slice(-10);
+            if (digits.length === 11 && digits.startsWith('1')) {
+                digits = digits.substring(1);
+            }
+            if (digits.length > 10) {
+                digits = digits.slice(-10);
+            }
             return digits;
         }
 
         function formatPhoneDisplay(digits) {
             if (digits.length === 0) return '';
-            if (digits.length <= 3) return digits;
-            if (digits.length <= 6) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
-            return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6, 10)}`;
+            if (digits.length <= 3) return digits; if (digits.length <= 6) return `(${digits.slice(0, 3)})
+            ${digits.slice(3)}`; return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6, 10)}`;
         }
-
         function handlePhoneInput(e) {
-            const digits = normalizePhoneNumber(e.target.value);
-            e.target.value = formatPhoneDisplay(digits);
-        }
-
-        phoneInput.addEventListener('input', handlePhoneInput);
-        phoneInput.addEventListener('paste', (e) => setTimeout(() => handlePhoneInput(e), 0));
+            const digits = normalizePhoneNumber(e.target.value); const
+                formatted = formatPhoneDisplay(digits); e.target.value = formatted;
+        } phoneInput.addEventListener('input',
+            handlePhoneInput); phoneInput.addEventListener('paste', (e) => setTimeout(() => handlePhoneInput(e), 0));
         phoneInput.addEventListener('change', handlePhoneInput);
 
-        // ============================================
-        // QUEUE DATA
-        // ============================================
+        // Load queue data and calculate wait times
         async function loadQueueData() {
             try {
                 const response = await fetch(CONFIG.dashboardUrl);
-                if (!response.ok) { queueData = []; return; }
+                if (!response.ok) {
+                    queueData = [];
+                    return;
+                }
+
                 const rawText = await response.text();
-                if (!rawText || rawText.trim() === '' || rawText.trim() === '{}') { queueData = []; return; }
+                if (!rawText || rawText.trim() === '' || rawText.trim() === '{}') {
+                    queueData = [];
+                    return;
+                }
+
                 let data = JSON.parse(rawText);
                 queueData = Array.isArray(data) ? data : (data && typeof data === 'object' ? [data] : []);
             } catch (error) {
+                console.error('Error loading queue data:', error);
                 queueData = [];
             }
         }
 
+        // Calculate wait time for a specific barber
         function calculateWaitTime(barberId) {
             const activeStatuses = ['WAITING', 'NOTIFIED', 'IN_SERVICE'];
-            const barberQueue = queueData.filter(c => c && c.barber_id === barberId && activeStatuses.includes(String(c.status || '').toUpperCase().trim()));
+            const barberQueue = queueData.filter(c =>
+                c &&
+                c.barber_id === barberId &&
+                activeStatuses.includes(String(c.status || '').toUpperCase().trim())
+            );
+
             if (barberQueue.length === 0) return 0;
-            return Math.ceil(barberQueue.reduce((sum, c) => sum + (parseInt(c.service_duration) || 40), 0));
+
+            // Calculate total wait time (sum of service durations)
+            const totalTime = barberQueue.reduce((sum, c) => {
+                return sum + (parseInt(c.service_duration) || 40);
+            }, 0);
+
+            return Math.ceil(totalTime);
         }
 
+        // Render barber selection cards
         function renderBarbers() {
             const grid = document.getElementById('barberGrid');
+
             const barbersHTML = CONFIG.barbers.map(barber => {
                 const waitTime = calculateWaitTime(barber.id);
+                const queueSize = queueData.filter(c => c && c.barber_id === barber.id).length;
+
                 let waitClass = 'wait-low';
                 let waitText = 'Available';
 
@@ -1245,46 +1422,48 @@
                     waitText = 'Auto-assign';
                 } else if (waitTime === 0) {
                     waitText = 'No wait';
-                } else if (waitTime < 30) {
-                    waitClass = 'wait-low';
-                    waitText = `~${waitTime} min`;
-                } else if (waitTime < 60) {
-                    waitClass = 'wait-medium';
-                    waitText = `~${waitTime} min`;
+                } else if (waitTime < 30) { waitClass = 'wait-low'; waitText = `~${waitTime} min`; } else if (waitTime < 60) {
+                    waitClass = 'wait-medium'; waitText = `~${waitTime} min`;
                 } else {
                     waitClass = 'wait-high';
                     waitText = `~${Math.ceil(waitTime / 60)} hr`;
-                }
-
-                return `
-                    <div class="barber-option">
-                        <input type="radio" id="barber-${barber.id}" name="barber" value="${barber.id}" ${barber.id === 'next_available' ? 'checked' : ''}>
-                        <label for="barber-${barber.id}" class="barber-card">
-                            <div class="barber-avatar" style="background: linear-gradient(135deg, ${barber.color}, ${barber.color}dd);">${barber.avatar}</div>
-                            <div class="barber-name">${barber.name}</div>
-                            ${SHOP_CONFIG.display.showWaitTimes ? `<div class="barber-wait"><span class="wait-indicator ${waitClass}"></span>${waitText}</div>` : ''}
-                        </label>
+                } return ` <div class="barber-option">
+                <input type="radio" id="barber-${barber.id}" name="barber" value="${barber.id}"
+                    ${barber.id === 'next_available' ? 'checked' : ''}>
+                <label for="barber-${barber.id}" class="barber-card">
+                    <div class="barber-avatar"
+                        style="background: linear-gradient(135deg, ${barber.color}, ${barber.color}dd);">
+                        ${barber.avatar}
                     </div>
+                    <div class="barber-name">${barber.name}</div>
+                    <div class="barber-wait">
+                        <span class="wait-indicator ${waitClass}"></span>
+                        ${waitText}
+                    </div>
+                </label>
+                </div>
                 `;
             }).join('');
+
             grid.innerHTML = barbersHTML;
         }
 
+        // Get selected barber
         function getSelectedBarber() {
             const selected = document.querySelector('input[name="barber"]:checked');
             return selected ? selected.value : 'next_available';
         }
 
+        // Get service duration
         function getServiceDuration() {
             const selectedService = document.querySelector('input[name="service"]:checked');
             return selectedService ? parseInt(selectedService.dataset.duration) : 40;
         }
 
-        // ============================================
-        // FORM SUBMISSION
-        // ============================================
+        // Handle form submission
         document.getElementById('checkinForm').addEventListener('submit', async (e) => {
             e.preventDefault();
+
             const errorMessage = document.getElementById('errorMessage');
             const errorText = document.getElementById('errorText');
             const submitBtn = document.getElementById('submitBtn');
@@ -1301,28 +1480,42 @@
                 const serviceDuration = getServiceDuration();
                 const barberId = getSelectedBarber();
 
-                if (!name || !phone || !service || !barberId) throw new Error('Please fill in all required fields');
-                if (phone.length !== 10) throw new Error('Please enter a valid 10-digit phone number');
+                if (!name || !phone || !service || !barberId) {
+                    throw new Error('Please fill in all required fields');
+                }
+
+                if (phone.length !== 10) {
+                    throw new Error('Please enter a valid 10-digit phone number');
+                }
 
                 const response = await fetch(CONFIG.checkinUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, phone, service, service_duration: serviceDuration, barber_id: barberId })
+                    body: JSON.stringify({
+                        name: name,
+                        phone: phone,
+                        service: service,
+                        service_duration: serviceDuration,
+                        barber_id: barberId
+                    })
                 });
 
                 if (response.ok) {
                     const selectedBarberObj = CONFIG.barbers.find(b => b.id === barberId);
-                    document.getElementById('selectedBarberName').textContent = selectedBarberObj ? selectedBarberObj.name : 'your selected barber';
+                    document.getElementById('selectedBarberName').textContent = selectedBarberObj ? selectedBarberObj.name :
+                        'your selected barber';
                     document.getElementById('successOverlay').style.display = 'flex';
                     document.body.style.overflow = 'hidden';
                     document.getElementById('checkinForm').reset();
-                    await loadQueueData();
+
+                    // Re-render barbers with default selection (no extra API call needed here)
                     renderBarbers();
                 } else {
                     const responseText = await response.text();
                     throw new Error(`Server error: ${response.status} - ${responseText}`);
                 }
             } catch (error) {
+                console.error('Check-in error:', error);
                 errorText.textContent = `❌ ${error.message}`;
                 errorMessage.style.display = 'block';
                 window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1342,10 +1535,6 @@
         // INITIALIZATION (API Usage Optimized)
         // ============================================
         (async function init() {
-            setupBranding();
-            renderServices();
-            initializeAccess();
-
             // API Usage Optimization Constants
             const REFRESH_INTERVAL = 180000; // 180 seconds (optimized from 90s)
             const DEBOUNCE_TIME = 30000;     // 30 seconds minimum between refreshes
