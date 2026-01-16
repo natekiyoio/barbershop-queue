@@ -1036,6 +1036,165 @@
             background: rgba(248, 113, 113, 0.2);
             transform: translateY(-2px);
         }
+
+        /* Manual Check-in Modal Styles */
+        .checkin-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            padding: 20px;
+        }
+
+        .checkin-modal.active {
+            display: flex;
+        }
+
+        .checkin-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(25px);
+            border-radius: 24px;
+            padding: 35px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--glass-border);
+            animation: slideUp 0.3s ease-out;
+        }
+
+        .checkin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .checkin-header h2 {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .close-modal {
+            background: rgba(248, 113, 113, 0.2);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-modal:hover {
+            background: rgba(248, 113, 113, 0.4);
+            transform: scale(1.1);
+        }
+
+        .checkin-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: var(--text-main);
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid var(--glass-border);
+            border-radius: 12px;
+            font-size: 15px;
+            font-family: 'Inter', sans-serif;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-glow);
+        }
+
+        .form-group select option {
+            background: #1e1b4b;
+            color: var(--text-main);
+        }
+
+        .btn-add-customer {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-add-customer:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px rgba(16, 185, 129, 0.5);
+        }
+
+        .btn-add-customer:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-checkin-open {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+            padding: 20px 30px;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .btn-checkin-open:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 0 35px rgba(16, 185, 129, 0.5);
+        }
+
+        .checkin-error {
+            background: rgba(248, 113, 113, 0.15);
+            border: 1px solid rgba(248, 113, 113, 0.3);
+            color: #f87171;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            display: none;
+        }
     </style>
 </head>
 
@@ -1068,6 +1227,62 @@
             <div class="login-footer">
                 🔒 Protected access for <span>authorized staff only</span>
             </div>
+        </div>
+    </div>
+
+    <!-- Manual Check-in Modal -->
+    <div id="checkinModal" class="checkin-modal">
+        <div class="checkin-card">
+            <div class="checkin-header">
+                <h2>➕ Add Customer</h2>
+                <button class="close-modal" onclick="closeCheckinModal()">✕</button>
+            </div>
+
+            <div id="checkinError" class="checkin-error"></div>
+
+            <form id="manualCheckinForm" class="checkin-form">
+                <div class="form-group">
+                    <label for="customerName">Customer Name *</label>
+                    <input type="text" id="customerName" placeholder="Enter customer name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="customerPhone">Phone Number (Optional)</label>
+                    <input type="tel" id="customerPhone" placeholder="(555) 123-4567">
+                </div>
+
+                <div class="form-group">
+                    <label for="customerService">Service *</label>
+                    <select id="customerService" required>
+                        <option value="">Select a service...</option>
+                        <option value="Men's Regular Cut" data-duration="40">Men's Regular Cut - $30 (40 min)</option>
+                        <option value="Skin Fade (Only)" data-duration="40">Skin Fade (Only) - $30 (40 min)</option>
+                        <option value="Skin Fade + Beard Trim & Line Up" data-duration="60">Skin Fade + Beard - $40 (1
+                            hr)</option>
+                        <option value="Taper Fade + Beard Line Up" data-duration="60">Taper Fade + Beard - $35 (1 hr)
+                        </option>
+                        <option value="Hair + Beard Line Up (Only)" data-duration="20">Hair + Beard Line Up - $20 (20
+                            min)</option>
+                        <option value="Women's Hair Cut" data-duration="40">Women's Hair Cut - $30 (40 min)</option>
+                        <option value="Seniors' Haircut" data-duration="30">Seniors' Haircut - $25 (30 min)</option>
+                        <option value="Kids' Cut" data-duration="30">Kids' Cut - $20 (30 min)</option>
+                        <option value="Luxury Service" data-duration="95">Luxury Service - $60 (1hr 35min)</option>
+                        <option value="Men's Wash (Buzz Cut)" data-duration="10">Men's Wash (Buzz Cut) - $10 (10 min)
+                        </option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="customerBarber">Assign to Barber *</label>
+                    <select id="customerBarber" required>
+                        <!-- Populated dynamically -->
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-add-customer" id="addCustomerBtn">
+                    Add to Queue
+                </button>
+            </form>
         </div>
     </div>
 
@@ -1105,6 +1320,10 @@
                 <button class="btn btn-refresh" onclick="loadDashboard()">
                     <span>🔄</span>
                     <span>Refresh</span>
+                </button>
+                <button class="btn btn-checkin-open" onclick="openCheckinModal()">
+                    <span>➕</span>
+                    <span>Add Customer</span>
                 </button>
             </div>
 
@@ -1594,6 +1813,150 @@
             const tip = TIPS[Math.floor(Math.random() * TIPS.length)];
             document.getElementById('quickTip').textContent = `"${tip}"`;
         }
+
+        // ============================================
+        // MANUAL CHECK-IN FUNCTIONS
+        // ============================================
+        function openCheckinModal() {
+            populateBarberDropdown();
+            document.getElementById('checkinModal').classList.add('active');
+            document.getElementById('customerName').focus();
+        }
+
+        function closeCheckinModal() {
+            document.getElementById('checkinModal').classList.remove('active');
+            document.getElementById('manualCheckinForm').reset();
+            document.getElementById('checkinError').style.display = 'none';
+        }
+
+        function populateBarberDropdown() {
+            const select = document.getElementById('customerBarber');
+            select.innerHTML = '<option value="">Select a barber...</option>';
+
+            CONFIG.barbers.forEach(barber => {
+                const option = document.createElement('option');
+                option.value = barber.id;
+                option.textContent = barber.name;
+                // Pre-select current barber if viewing their queue
+                if (currentBarberId !== 'hub' && barber.id === currentBarberId) {
+                    option.selected = true;
+                }
+                select.appendChild(option);
+            });
+        }
+
+        // Phone formatting for manual check-in
+        function formatManualPhone(input) {
+            let digits = input.value.replace(/\D/g, '');
+            if (digits.length > 10) digits = digits.slice(-10);
+
+            let formatted = '';
+            if (digits.length > 0) formatted = '(' + digits.slice(0, 3);
+            if (digits.length >= 3) formatted += ') ' + digits.slice(3, 6);
+            if (digits.length >= 6) formatted += '-' + digits.slice(6, 10);
+
+            input.value = formatted;
+        }
+
+        // Setup phone input formatting
+        document.getElementById('customerPhone').addEventListener('input', function () {
+            formatManualPhone(this);
+        });
+
+        // Handle manual check-in form submission
+        document.getElementById('manualCheckinForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const errorEl = document.getElementById('checkinError');
+            const submitBtn = document.getElementById('addCustomerBtn');
+
+            // Get form values
+            const name = document.getElementById('customerName').value.trim();
+            const phoneRaw = document.getElementById('customerPhone').value.replace(/\D/g, '');
+            const serviceSelect = document.getElementById('customerService');
+            const service = serviceSelect.value;
+            const serviceDuration = parseInt(serviceSelect.options[serviceSelect.selectedIndex].dataset.duration) || 40;
+            const barberId = document.getElementById('customerBarber').value;
+
+            // Validate
+            if (!name) {
+                errorEl.textContent = 'Please enter the customer name.';
+                errorEl.style.display = 'block';
+                return;
+            }
+
+            if (!service) {
+                errorEl.textContent = 'Please select a service.';
+                errorEl.style.display = 'block';
+                return;
+            }
+
+            if (!barberId) {
+                errorEl.textContent = 'Please select a barber.';
+                errorEl.style.display = 'block';
+                return;
+            }
+
+            // Phone is optional, but if provided should be 10 digits
+            if (phoneRaw && phoneRaw.length !== 10) {
+                errorEl.textContent = 'Please enter a valid 10-digit phone number or leave empty.';
+                errorEl.style.display = 'block';
+                return;
+            }
+
+            // Disable button while submitting
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Adding...';
+            errorEl.style.display = 'none';
+
+            try {
+                const response = await fetch(getApiUrl('checkin'), {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: name,
+                        phone: phoneRaw || 'NO_PHONE',
+                        service: service,
+                        service_duration: serviceDuration,
+                        barber_id: barberId,
+                        manual_checkin: true
+                    })
+                });
+
+                if (response.ok) {
+                    showToast(`${name} added to queue!`);
+                    logActivity('Staff', `Manually added ${name} to queue`, 'success');
+                    closeCheckinModal();
+
+                    // Refresh dashboard after short delay
+                    setTimeout(loadDashboard, 500);
+                } else {
+                    const errorText = await response.text();
+                    throw new Error(errorText || 'Failed to add customer');
+                }
+            } catch (error) {
+                console.error('Manual check-in error:', error);
+                errorEl.textContent = `Error: ${error.message}`;
+                errorEl.style.display = 'block';
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Add to Queue';
+            }
+        });
+
+        // Close modal on escape key
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                closeCheckinModal();
+            }
+        });
+
+        // Close modal when clicking outside
+        document.getElementById('checkinModal').addEventListener('click', function (e) {
+            if (e.target === this) {
+                closeCheckinModal();
+            }
+        });
 
         // ============================================
         // INITIALIZATION
