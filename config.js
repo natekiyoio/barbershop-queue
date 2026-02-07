@@ -24,7 +24,7 @@ const SHOP_CONFIG = {
     },
 
     location: {
-        enabled: true,
+        enabled: false,
         latitude: 51.102640,
         longitude: -113.935633,
         maxDistanceMeters: 100,
